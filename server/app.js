@@ -14,6 +14,11 @@ app.use(express.json());
 // serve client
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(express.static(path.join(__dirname, '../employee')));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/Home.html"));
+});
+
 app.use('/api/rooms', require('./routes/room.js'));
 app.use('/api', require('./routes/auth'));
 app.use('/api/bookings', require('./routes/booking'));
