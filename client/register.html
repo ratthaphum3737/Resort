@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Register | Resort System</title>
+  <link rel="stylesheet" href="/css/register.css">
+</head>
+<body>
+
+<div class="register-box">
+  <h2>สมัครสมาชิก</h2>
+
+  <input type="text" id="fname" placeholder="ชื่อ">
+  <input type="text" id="lname" placeholder="นามสกุล">
+  <input type="text" id="idnumber" placeholder="เลขบัตรประชาชน 13 หลัก">
+  <input type="text" id="tel" placeholder="เบอร์โทรศัพท์">
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+
+  <button onclick="register()">Register</button>
+  <button class="back" onclick="window.location.href='/login.html'">กลับไปหน้า Login  </button>
+
+  <p id="msg"></p>
+</div>
+
+<script src="/js/register.js"></script>
+</body>
+</html>

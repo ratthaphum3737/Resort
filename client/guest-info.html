@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>กรอกข้อมูลผู้เข้าพัก</title>
+  <link rel="stylesheet" href="/css/home.css">
+  <style>
+    .guest-box {
+      max-width: 500px;
+      margin: 60px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .guest-box input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .guest-box button {
+      width: 100%;
+      padding: 10px;
+      background: #1f3c88;
+      color: white;
+      border: none;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="guest-box">
+  <h2>กรอกข้อมูลผู้เข้าพัก</h2>
+
+  <input type="text" id="id_number" maxlength="13" placeholder="เลขบัตรประชาชน 13 หลัก" onblur="loadGuestData()">
+  <input type="text" id="tel" maxlength="10" placeholder="เบอร์โทร 10 หลัก">
+  <input type="email" id="email" placeholder="Email">
+  <input type="text" id="fname" placeholder="ชื่อ">
+  <input type="text" id="lname" placeholder="นามสกุล">
+
+  <button onclick="submitGuestBooking()">ยืนยันการจอง</button>
+</div>
+
+<script src="/js/guest-info.js"></script>
+</body>
+</html>

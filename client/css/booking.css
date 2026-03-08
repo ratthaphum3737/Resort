@@ -1,0 +1,260 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f5f7fa;
+}
+
+.booking-box {
+  margin: 40px auto;
+}
+
+.booking-box {
+  background: white;
+  padding: 30px;
+  max-width: 700px;
+  margin: auto;
+  border-radius: 10px;
+}
+
+.date-picker input {
+  margin-right: 10px;
+}
+
+#calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.day {
+  padding: 12px;
+  text-align: center;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.available {
+  background: #d4edda;
+}
+
+.unavailable {
+  background: #f8d7da;
+  cursor: not-allowed;
+}
+
+.selected-day {
+  border: 2px solid #1f3c88;
+}
+
+.selected {
+  margin-top: 20px;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px;
+  background: #1f3c88;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+
+.calendar-wrapper {
+  margin-top: 20px;
+}
+
+#calendar-header {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+#calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+#calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.day {
+  padding: 10px;
+  text-align: center;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.available {
+  background: #e6f4ff;
+}
+
+.unavailable {
+  background: #eee;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.selected-day {
+  background: #4d96ff;
+  color: #fff;
+}
+
+.in-range {
+  background: #ffb3b3;
+  color: #000;
+}
+
+.selected-day {
+  background: #f84949;
+  color: #fff;
+}
+.empty-day {
+  pointer-events: none;
+}
+
+.room-summary {
+  margin-bottom: 30px;
+}
+
+.room-summary .room-card {
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+
+.room-summary .room-detail {
+  padding: 18px 20px;
+}
+
+.room-summary .room-detail h3 {
+  margin: 0 0 6px;
+  font-size: 20px;
+}
+
+.room-summary .room-detail p {
+  margin: 4px 0;
+  color: #555;
+}
+
+.room-summary .room-price {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.room-summary .room-price h3 {
+  margin: 0;
+  color: #1f3c88;
+}
+
+.booking-summary {
+  margin-top: 15px;
+  padding: 15px;
+  border: 1px solid #e3e9f3; 
+  color: #000000;
+  border-radius: 10px;
+  background: #f9fbff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.booking-summary p {
+  margin: 8px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.booking-summary .total {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed #ccc; 
+  font-size: 20px;
+  font-weight: bold;
+  color: #d32f2f;
+}
+
+.service-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.service-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.service-name {
+  font-size: 15px;
+}
+.service-price {
+  font-size: 14px;
+}
+.service-price {
+  font-weight: bold;
+  color: #1f3c88;
+}
+
+.people-select {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.people-select label {
+  font-weight: bold;
+}
+
+.people-select input {
+  width: 70px;
+  padding: 6px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.image-section{
+  display:flex;
+  flex-direction:column;
+}
+
+.main-img{
+  width:100%;
+  height:320px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+
+.room-gallery{
+  display:flex;
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.room-img{
+  width:32%;
+  height:260px;
+  object-fit:cover;
+  border-radius:12px;
+}
+
+.room-detail{
+  padding:5px 0;
+}

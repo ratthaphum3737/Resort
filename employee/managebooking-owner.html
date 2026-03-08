@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Booking - Owner</title>
+    <link rel="stylesheet" href="/css/managebooking-owner.css">
+</head>
+
+<body>
+
+    <div class="sidebar">
+    <h2 class="logo">Resort Admin</h2>
+    <nav>
+        <ul>
+        <li onclick="goManageRoom()">Manage Rooms</li>
+        <li class="active" onclick="goManageBooking()">Manage Booking</li>
+        <li onclick="window.location.href='manageMember-owner.html'">
+            Manage Members
+        </li>
+        <li onclick="window.location.href='report-owner.html'" >
+            Reports
+        </li>
+        <li id="logoutBtn">Logout</li>
+        </ul>
+    </nav>
+    </div>
+
+    <div class="main-content">
+        <h1>Manage Bookings</h1>
+
+        <div class="booking-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Customer Name</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="bookingTableBody">
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+   <script src="/js/managebooking-owner.js"></script>
+</body>
+
+</html>

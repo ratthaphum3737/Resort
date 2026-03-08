@@ -1,0 +1,169 @@
+CREATE TABLE Customer (
+    Id_number CHAR(13) NOT NULL,
+    Tel CHAR(10),
+    Email VARCHAR(50),
+    cpassword VARCHAR(255),
+    Cid CHAR(5) NOT NULL,
+    Fname VARCHAR(50),
+    Lname VARCHAR(50),
+    ctype VARCHAR(50),
+    CONSTRAINT XPKCustomer PRIMARY KEY (Cid)
+);
+
+CREATE TABLE Owner (
+    OPassword VARCHAR(255) NOT NULL,
+    OId CHAR(5) NOT NULL,
+    Email VARCHAR(50),
+    Tel CHAR(10),
+    Fname VARCHAR(50),
+    Lname VARCHAR(50),
+    CONSTRAINT XPKOwner PRIMARY KEY (OId)
+);
+
+CREATE TABLE Employee (
+    EMPid CHAR(13) NOT NULL,
+    UPassword VARCHAR(255),
+    Fname VARCHAR(50),
+    Lname VARCHAR(50),
+    User_Role VARCHAR(50),
+    Email VARCHAR(50),
+    Tel CHAR(10),
+    OId CHAR(5),
+    CONSTRAINT XPKEmployee PRIMARY KEY (EMPid)
+);
+
+CREATE TABLE Room (
+    RPrice NUMERIC(5) NOT NULL,
+    RStatus VARCHAR(50) NOT NULL,
+    RNum CHAR(3) NOT NULL,
+    Rid CHAR(5) NOT NULL,
+    RDesc VARCHAR(255),
+    RType VARCHAR(50),
+    CONSTRAINT XPKRoom PRIMARY KEY (Rid)
+);
+
+CREATE TABLE Service (
+    SName VARCHAR(50),
+    Sprice NUMERIC(5),
+    Sid CHAR(5) NOT NULL,
+    CONSTRAINT XPKService PRIMARY KEY (Sid)
+);
+
+CREATE TABLE Task (
+    Tdate DATE NOT NULL,
+    Tid CHAR(5) NOT NULL,
+    taskname VARCHAR(100),
+    tasktype VARCHAR(50),
+    TStatus VARCHAR(50),
+    CONSTRAINT XPKTask PRIMARY KEY (Tid)
+);
+
+CREATE TABLE Booking (
+    Bid CHAR(5) NOT NULL,
+    BStatus VARCHAR(50),
+    Bnum_people INT,
+    Bcheckin_date DATE,
+    Bcheckout_date DATE,
+    Cid CHAR(5),
+    BDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT XPKBooking PRIMARY KEY (Bid)
+);
+
+CREATE TABLE RoomImage ( 
+    imgid SERIAL PRIMARY KEY, 
+    rid CHAR(5) REFERENCES room(rid), 
+    image_url TEXT 
+    );
+
+CREATE TABLE Booking_Room (
+    Bid CHAR(5) NOT NULL,
+    Rid CHAR(5) NOT NULL,
+    CONSTRAINT XPKBooking_Room PRIMARY KEY (Bid, Rid)
+);
+
+CREATE TABLE Booking_Service (
+    Bid CHAR(5) NOT NULL,
+    Sid CHAR(5) NOT NULL,
+    CONSTRAINT XPKBooking_Service PRIMARY KEY (Bid, Sid)
+);
+
+CREATE TABLE Booking_Task (
+    Tid CHAR(5) NOT NULL,
+    Bid CHAR(5) NOT NULL,
+    CONSTRAINT XPKBooking_Task PRIMARY KEY (Tid, Bid)
+);
+
+CREATE TABLE Employee_Task (
+    EMPid CHAR(13) NOT NULL,
+    Tid CHAR(5) NOT NULL,
+    CONSTRAINT XPKEmployee_Task PRIMARY KEY (EMPid, Tid)
+);
+
+CREATE TABLE Room_Task (
+    Tid CHAR(5) NOT NULL,
+    Rid CHAR(5) NOT NULL,
+    CONSTRAINT XPKRoom_Task PRIMARY KEY (Tid, Rid)
+);
+
+
+ALTER TABLE Booking
+ADD CONSTRAINT R_1
+FOREIGN KEY (Cid)
+REFERENCES Customer(Cid)
+ON DELETE SET NULL;
+
+ALTER TABLE Employee
+ADD CONSTRAINT R_2
+FOREIGN KEY (OId)
+REFERENCES Owner(OId)
+ON DELETE SET NULL;
+
+ALTER TABLE Booking_Room
+ADD CONSTRAINT R_3
+FOREIGN KEY (Bid)
+REFERENCES Booking(Bid);
+
+ALTER TABLE Booking_Room
+ADD CONSTRAINT R_4
+FOREIGN KEY (Rid)
+REFERENCES Room(Rid);
+
+ALTER TABLE Room_Task
+ADD CONSTRAINT R_7
+FOREIGN KEY (Tid)
+REFERENCES Task(Tid);
+
+ALTER TABLE Room_Task
+ADD CONSTRAINT R_8
+FOREIGN KEY (Rid)
+REFERENCES Room(Rid);
+
+ALTER TABLE Booking_Task
+ADD CONSTRAINT R_9
+FOREIGN KEY (Tid)
+REFERENCES Task(Tid);
+
+ALTER TABLE Booking_Task
+ADD CONSTRAINT R_10
+FOREIGN KEY (Bid)
+REFERENCES Booking(Bid);
+
+ALTER TABLE Employee_Task
+ADD CONSTRAINT R_11
+FOREIGN KEY (EMPid)
+REFERENCES Employee(EMPid);
+
+ALTER TABLE Employee_Task
+ADD CONSTRAINT R_13
+FOREIGN KEY (Tid)
+REFERENCES Task(Tid);
+
+ALTER TABLE Booking_Service
+ADD CONSTRAINT R_15
+FOREIGN KEY (Bid)
+REFERENCES Booking(Bid);
+
+ALTER TABLE Booking_Service
+ADD CONSTRAINT R_16
+FOREIGN KEY (Sid)
+REFERENCES Service(Sid);

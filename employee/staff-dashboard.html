@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Staff Tasks | Resort System</title>
+  <link rel="stylesheet" href="/css/staff-dashboard.css">
+</head>
+<body>
+
+  <div class="dashboard-container">
+<aside class="sidebar">
+      <h2>Staff Panel</h2>
+      <ul class="menu">
+        <li class="active" id="menu-pending" onclick="switchTab('pending')">งานของฉัน (My Tasks)</li>
+        <li id="menu-completed" onclick="switchTab('completed')">งานที่ทำเสร็จแล้ว</li>
+      </ul>
+      <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
+    </aside>
+
+    <main class="main-content">
+      <header>
+        <h1>ตารางงานพนักงาน (Tasks)</h1>
+        <p>รายการงานที่ต้องดำเนินการประจำวัน</p>
+      </header>
+      
+      <section class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>รหัสงาน</th>
+              <th>รายละเอียด / ห้อง</th>
+              <th>กำหนดเวลา</th>
+              <th>สถานะ</th>
+              <th>อัปเดตงาน</th>
+            </tr>
+          </thead>
+          <tbody id="taskTable">
+            <tr>
+              <td colspan="6" style="text-align: center;">กำลังโหลดข้อมูลงาน...</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/staff-dashboard.js"></script>
+</body>
+</html>

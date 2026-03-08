@@ -1,0 +1,88 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f7fa;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.account-box {
+  background: white;
+  padding: 30px;
+  width: 420px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.input-password {
+  margin: 10px 0;
+}
+
+.checkbox-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.account-box h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.field {
+  margin-top: 12px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.input-row input[type="text"],
+.input-row input[type="email"] {
+  flex: 1;
+}
+.input-row input[type="password"] {
+  flex: 1;
+}
+
+input {
+  padding: 9px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+input:disabled {
+  background: #f0f0f0;
+  color: #666;
+}
+
+button {
+  width: 100%;
+  margin-top: 15px;
+  padding: 10px;
+  background: #1f3c88;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.logout {
+  background: #e63946;
+
+}
+
+.back {
+  background: #07c647;
+}

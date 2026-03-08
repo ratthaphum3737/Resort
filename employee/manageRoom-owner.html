@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Rooms | Owner</title>
+
+  <link rel="stylesheet" href="/css/manageRoom-owner.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2 class="logo">Resort Admin</h2>
+    <nav>
+      <ul>
+        <li class="active" onclick="goManageRoom()">Manage Rooms</li>
+        <li onclick="goManageBooking()">Manage Booking</li>
+        <li onclick="window.location.href='manageMember-owner.html'">
+          Manage Members
+        </li>
+        <li onclick="window.location.href='report-owner.html'">
+          Reports
+        </li>
+        <li id="logoutBtn">Logout</li>
+      </ul>
+    </nav>
+  </div>
+
+
+  <div class="container">
+
+    <h1>Manage Rooms</h1>
+
+
+    <div class="form-section">
+
+      <form id="addRoomForm" enctype="multipart/form-data">
+
+        <div class="input-row">
+
+          <div>
+            <label>ประเภทห้อง</label>
+            <input type="text" id="roomType" required>
+          </div>
+
+          <div>
+            <label>ราคา</label>
+            <input type="number" id="price" required>
+          </div>
+
+          <div>
+            <label>จำนวนผู้เข้าพัก</label>
+            <input type="number" id="num" required>
+          </div>
+
+        </div>
+
+        <div class="upload-section">
+
+          <h3>อัปโหลดรูปห้องพัก</h3>
+          <p class="upload-note">
+            กรุณาอัปโหลดรูปให้ครบ 3 รูป<br>
+            - รูปที่ 1 : รูปหน้าห้อง (แสดงหน้าเว็บไซต์)<br>
+            - รูปที่ 2-3 : รูปภายในห้อง
+          </p>
+
+          <div class="upload-box">
+            <label>รูปหน้าห้อง (เลือกได้ 1 รูป)</label>
+            <input type="file" id="coverImage" accept="image/*">
+          </div>
+
+          <div class="upload-box">
+            <label>รูปภายในห้อง (เลือกได้ 2 รูป)</label>
+            <input type="file" id="roomImages" multiple accept="image/*">
+          </div>
+
+          <div id="preview"></div>
+
+        </div>
+        <div id="preview"></div>
+
+        <button type="submit">เพิ่มห้อง</button>
+
+      </form>
+
+    </div>
+    <div class="table-section">
+      <h2>รายการห้องพัก</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Room ID</th>
+            <th>Room Number</th>
+            <th>Type</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="roomTableBody">
+          <!-- JS จะมา render ตรงนี้ -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- ===== JS ===== -->
+  <script src="/js/manageRoom-owner.js"></script>
+
+  <script>
+    function goManageRoom() {
+      window.location.href = 'manageRoom-owner.html';
+    }
+
+    function goManageBooking() {
+      window.location.href = 'managebooking-owner.html';
+    }
+  </script>
+
+</body>
+</html>

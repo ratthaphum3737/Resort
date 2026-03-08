@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>จัดการบัญชีผู้ใช้</title>
+  <link rel="stylesheet" href="/css/account.css">
+</head>
+<body>
+
+<div class="account-box">
+  <h2>บัญชีผู้ใช้</h2>
+
+  <div class="field">
+    <label>ชื่อ</label>
+    <div class="input-row">
+      <input type="text" id="fname" disabled><label>
+      <input type="checkbox" onchange="toggleEdit('fname', this)">แก้ไข</label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>นามสกุล</label>
+    <div class="input-row">
+      <input type="text" id="lname" disabled><label>
+      <input type="checkbox" onchange="toggleEdit('lname', this)">แก้ไข</label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>เบอร์โทร</label>
+    <div class="input-row">
+      <input type="text" id="tel" disabled><label>
+      <input type="checkbox" onchange="toggleEdit('tel', this)">แก้ไข</label>
+    </div>
+  </div>
+
+
+  <div class="field">
+  <label>Email</label>
+  <div class="input-row">
+    <input type="text" id="email" disabled><label>
+    <input type="checkbox" onchange="toggleEdit('email', this)">แก้ไข</label>
+    </div>
+  </div>
+
+  <div class="field">
+  <label>รหัสผ่าน</label>
+  <div class="input-row">
+    <input type="password" id="password" disabled placeholder="••••••••"><label>
+    <input type="checkbox" onchange="toggleEdit('password', this)" >แก้ไข</label>
+    </div>
+  </div>
+
+  <hr>
+  <button onclick="submitUpdate()">บันทึกการเปลี่ยนแปลง</button>
+  <button class="back" onclick="goback()">ย้อนกลับ</button>
+  <button class="logout" onclick="logout()">Logout</button>
+</div>
+
+<script src="/js/account.js"></script>
+</body>
+</html>

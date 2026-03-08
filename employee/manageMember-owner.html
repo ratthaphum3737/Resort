@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Members</title>
+    <link rel="stylesheet" href="css/manageMember-owner.css">
+    
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2 class="logo">Resort Admin</h2>
+        <nav>
+            <ul>
+                <li onclick="goManageRoom()">Manage Rooms</li>
+                <li onclick="goBooking()">Manage Booking</li>
+                <li class="active" onclick="window.location.href='manageMember-owner.html'">
+                    Manage Members
+                </li>
+                <li onclick="window.location.href='report-owner.html'">
+                    Reports
+                </li>
+                <li id="logoutBtn">Logout</li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <h1>Manage Members (พนักงาน & ลูกค้า)</h1>
+
+        <!-- ฟอร์มพนักงาน -->
+        <div id="employee-form-container" class="form-container">
+            <h3 id="formTitle">เพิ่มพนักงานใหม่</h3>
+
+            <form id="addEmployeeForm">
+                <div class="form-row">
+                    <input type="text" id="empid" placeholder="รหัสพนักงาน" required maxlength="13">
+                    <input type="text" id="oid" placeholder="รหัสเจ้าของ (OID)" required>
+                </div>
+
+                <div class="form-row">
+                    <input type="text" id="fname" placeholder="ชื่อ" required>
+                    <input type="text" id="lname" placeholder="นามสกุล" required>
+                </div>
+
+                <div class="form-row">
+                    <input type="email" id="email" placeholder="อีเมล">
+                    <input type="text" id="tel" placeholder="เบอร์โทรศัพท์" maxlength="10">
+                </div>
+
+                <div class="form-row">
+                    <div id="passwordGroup">
+                        <input type="text" id="password" placeholder="รหัสผ่านเข้าสู่ระบบ" required>
+                    </div>
+
+                    <select id="role">
+                        <option value="Resort Worker">Resort Worker</option>
+                        <option value="Technician">Maintenance Technician</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" id="submitBtn" class="btn approve">
+                        บันทึกข้อมูลพนักงาน
+                    </button>
+                    <button type="button" id="cancelEditBtn" class="btn reject" onclick="cancelEdit()">
+                        ยกเลิก
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- ฟอร์มแก้ไขลูกค้า -->
+        <div id="customer-edit-container" class="form-container customer-edit">
+            <h3>แก้ไขข้อมูลลูกค้า</h3>
+
+            <form id="editCustomerForm">
+                <div class="form-row">
+                    <input type="text" id="edit_cid" placeholder="รหัสลูกค้า" disabled>
+                    <input type="text" id="edit_cus_fname" placeholder="ชื่อ" required>
+                </div>
+
+                <div class="form-row">
+                    <input type="text" id="edit_cus_lname" placeholder="นามสกุล" required>
+                    <input type="email" id="edit_cus_email" placeholder="อีเมล">
+                </div>
+
+                <div class="form-row">
+                    <input type="text" id="edit_cus_tel" placeholder="เบอร์โทรศัพท์" maxlength="10">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn approve warning">
+                        อัปเดตลูกค้า
+                    </button>
+                    <button type="button" class="btn reject" onclick="closeCustomerEdit()">
+                        ยกเลิกการแก้ไข
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('employee')">ข้อมูลพนักงาน</button>
+            <button class="tab-btn" onclick="switchTab('customer')">ข้อมูลลูกค้า</button>
+        </div>
+
+        <!-- ตารางพนักงาน -->
+        <div id="employee-tab" class="tab-content active">
+            <div class="booking-table">
+                <div class="search-box">
+                    <input type="text" id="searchEmp"
+                        placeholder="ค้นหารหัส, ชื่อ, ตำแหน่ง หรือเบอร์โทร..."
+                        onkeyup="searchEmployee()">
+                    <button class="btn approve" onclick="searchEmployee()">ค้นหา</button>
+                    <button class="btn reject" onclick="clearSearch('employee')">ล้างค่า</button>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>รหัสพนักงาน</th>
+                            <th>ชื่อ - นามสกุล</th>
+                            <th>ตำแหน่ง</th>
+                            <th>เบอร์โทรศัพท์</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeeTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ตารางลูกค้า -->
+        <div id="customer-tab" class="tab-content">
+            <div class="booking-table">
+                <div class="search-box">
+                    <input type="text" id="searchCus"
+                        placeholder="ค้นหารหัส, ชื่อ, อีเมล หรือเบอร์โทร..."
+                        onkeyup="searchCustomer()">
+                    <button class="btn approve" onclick="searchCustomer()">ค้นหา</button>
+                    <button class="btn reject" onclick="clearSearch('customer')">ล้างค่า</button>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>รหัสลูกค้า</th>
+                            <th>ชื่อ - นามสกุล</th>
+                            <th>อีเมล</th>
+                            <th>เบอร์โทรศัพท์</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customerTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/manageMember-owner.js"></script>
+</body>
+</html>

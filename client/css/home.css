@@ -1,0 +1,233 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f7fa;
+}
+
+/* TOP BAR */
+.top-bar {
+  background: #1f3c88;
+  height: 90px;              /* 👈 ล็อกความสูง */
+  padding: 0 40px;           /* ตัด padding บน–ล่างออก */
+  display: flex;
+  align-items: center;
+  position: relative;
+  color: white;
+  box-sizing: border-box;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* IMAGE */
+.logo img {
+  height: 60px;        /* ปรับได้ */
+  width: auto;
+  object-fit: contain;
+}
+
+
+.label_check_in {
+  font-size: 15px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.label_check_out {
+  font-size: 15px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.label_number {
+  font-size: 15px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.search-group {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+}
+
+.login {
+  margin-left: auto;
+}
+
+.login-btn {
+  background: transparent;
+  border: 2px solid white;
+  padding: 8px 18px;
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background: white;
+  color: #1f3c88;
+}
+
+/* INPUTS */
+.search-group input {
+  padding: 8px;
+  border-radius: 4px;
+  border: none;
+}
+.search-group button {
+  background: #ff7a00;
+  border: none;
+  padding: 8px 15px;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.search-group button:hover {
+  background: #e66f00; /* เข้มขึ้นนิดตอน hover */
+}
+
+
+
+/* MAIN LAYOUT */
+.container {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* FILTER */
+.filter {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.filter label {
+  display: block;
+  margin: 6px 0;
+}
+
+/* ROOM CARD */
+.room-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.room-card {
+  display: grid;
+  grid-template-columns: 200px 1fr 180px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.room-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.room-info {
+  padding: 15px;
+}
+
+.room-price {
+  padding: 15px;
+  text-align: right;
+}
+
+.room-price h3 {
+  color: #e63946;
+}
+
+.room-price button {
+  background: #1f3c88;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+
+/*Drop Down*/
+.user-menu {
+  position: relative;
+  cursor: pointer;
+}
+
+.user-name {
+  font-weight: bold;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: rgb(180, 180, 180);
+  border: 1px solid #e66f00;
+  min-width: 150px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+.dropdown div {
+  padding: 10px;
+  color: #000
+}
+
+.dropdown div:hover {
+  background: #f2f2f2;
+}
+
+.user-menu:hover .dropdown {
+  display: block;
+}
+
+.no-room {
+  background: linear-gradient(135deg, #f8f9fc, #ffffff);
+  border-radius: 16px;
+  padding: 60px 40px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.no-room h2 {
+  font-size: 28px;
+  color: #1f3c88;
+  margin-bottom: 10px;
+}
+
+.no-room p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+#priceValue {
+  margin-top: 10px;  
+  font-weight: bold;
+  text-align: left;
+  color: #1f3c88;
+}
+
+.noUi-connect {
+  background: #1f3c88;
+}
+
+.noUi-handle {
+  border-radius: 50%;
+  background: #1f3c88;
+  border: 3px solid white;
+  box-shadow: none;
+}

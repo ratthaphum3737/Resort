@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ประวัติการจอง</title>
+  <link rel="stylesheet" href="/css/booking-history.css">
+</head>
+<body>
+
+<div class="history-box">
+  <h2>ประวัติการจอง</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>รหัสการจอง</th>
+        <th>ห้อง</th>
+        <th>วันที่เข้าพัก</th>
+        <th>วันที่ออก</th>
+        <th>จำนวนคน</th>
+        <th>สถานะ</th>
+      </tr>
+    </thead>
+    <tbody id="bookingTable"></tbody>
+  </table>
+
+  <button onclick="goHome()">กลับหน้า Home</button>
+</div>
+
+<script src="/js/booking-history.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Report</title>
+    <link rel="stylesheet" href="/css/managebooking-owner.css"> 
+    <link rel="stylesheet" href="/css/report-owner.css"> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2 class="logo">Resort Admin</h2>
+        <nav>
+            <ul>
+                <li onclick="goManageRoom()">Manage Rooms</li>
+                <li onclick="goManagebooking()">Manage Booking</li>
+                <li onclick="window.location.href='manageMember-owner.html'">Manage Members</li>
+                <li onclick="window.location.href='report-owner.html'" class="active">Reports</li>
+                <li id="logoutBtn">Logout</li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <h1>รายงานสถิติ (Reports)</h1>
+
+        <div class="filter-box" style="flex-direction: column; align-items: flex-start;">
+            <h4 style="margin: 0 0 10px 0; color: #2c3e50;">ช่วงวันที่ทำรายการ (วันที่ลูกค้ากดจอง)</h4>
+            <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                <label>ตั้งแต่:</label>
+                <input type="date" id="startDate1">
+                <label>ถึง:</label>
+                <input type="date" id="endDate1">
+            </div>
+            <h2 style="margin-top: 15px; color: #2c3e50; border-top: 1px dashed #ccc; padding-top: 15px; width: 100%;">
+                ยอดรายรับรวมสุทธิ: <span id="totalRevenueText" style="color: #e74c3c; font-size: 1.2em;">0.00</span> บาท
+            </h2>
+        </div>
+
+        <div class="chart-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="chart-wrapper">
+                <h3 class="chart-title">จำนวนการจอง (รายการ)</h3>
+                <canvas id="bookingChart"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <h3 class="chart-title">รายรับรวม (บาท)</h3>
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-container" style="grid-column: 1 / -1;">
+            <div class="chart-wrapper">
+                <h3 class="chart-title">จำนวนห้องที่ว่าง (ห้อง)</h3>
+                <canvas id="availableRoomChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/report-owner.js"></script>
+</body>
+</html>
