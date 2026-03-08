@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -5,14 +7,13 @@ const cron = require("node-cron");
 const pool = require('./db');
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
 // serve client
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(express.static(path.join(__dirname, '../employee')));
-
-
 
 app.use('/api/rooms', require('./routes/room.js'));
 app.use('/api', require('./routes/auth'));
@@ -27,8 +28,7 @@ app.use('/api/admin/reports', require('./routes/report-owner'));
 
 app.use('/api/upload', require('./routes/upload'));
 
-
-// ตรวจทุก 1 นาที
+// ตรวจ booking หมดเวลา
 cron.schedule("* * * * *", async () => {
 
   try {
@@ -48,6 +48,8 @@ cron.schedule("* * * * *", async () => {
 
 });
 
-app.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log('Server running on port :' + PORT);
 });
