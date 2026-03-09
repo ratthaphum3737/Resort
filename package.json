@@ -5,9 +5,6 @@
   "scripts": {
     "start": "node server/app.js"
   },
-  "engines": {
-    "node": "18.x"
-  },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
