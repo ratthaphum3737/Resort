@@ -2,24 +2,14 @@ let bookingChart;
 let revenueChart;
 let availableRoomChart;
 
-function reloadAllReports() {
-    console.log(
-        'reload',
-        document.getElementById('startDate1').value,
-        document.getElementById('endDate1').value
-    );
-
-    loadBookingAndRevenue();
-    loadAvailableRooms();
-}
-
+// ── init ──
 document.addEventListener("DOMContentLoaded", () => {
     const today = new Date();
     const lastWeek = new Date();
     lastWeek.setDate(today.getDate() - 7);
 
     const startInput = document.getElementById('startDate1');
-    const endInput = document.getElementById('endDate1');
+    const endInput   = document.getElementById('endDate1');
 
     if (!startInput || !endInput) {
         console.error('date input not found');
@@ -27,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     startInput.value = lastWeek.toISOString().split('T')[0];
-    endInput.value = today.toISOString().split('T')[0];
+    endInput.value   = today.toISOString().split('T')[0];
 
     ['input', 'change'].forEach(evt => {
         startInput.addEventListener(evt, reloadAllReports);
@@ -37,47 +27,45 @@ document.addEventListener("DOMContentLoaded", () => {
     reloadAllReports();
 });
 
+function reloadAllReports() {
+    loadBookingAndRevenue();
+    loadAvailableRooms();
+}
 
-
+// ── โหลดกราฟยอดจอง + รายรับ ──
 async function loadBookingAndRevenue() {
     const start = document.getElementById('startDate1').value;
-    const end = document.getElementById('endDate1').value;
+    const end   = document.getElementById('endDate1').value;
 
-    console.log('booking/revenue range:', start, end);
-    const resBooking = await fetch(`/api/admin/reports/bookings?start=${start}&end=${end}`);
-    const dataBooking = await resBooking.json();
-    console.log('booking data:', dataBooking);
-    const resRevenue = await fetch(`/api/admin/reports/revenue?start=${start}&end=${end}`);
-    const dataRevenue = await resRevenue.json();
-    console.log('revenue data:', dataRevenue);
-
+    // guard ก่อน fetch เสมอ
     if (!start || !end) return;
 
     try {
-        // 🔸 กราฟยอดจอง
-        const resBooking = await fetch(`/api/admin/reports/bookings?start=${start}&end=${end}`);
-        const dataBooking = await resBooking.json();
+        // fetch ครั้งเดียว ไม่ซ้ำ
+        const [resBooking, resRevenue] = await Promise.all([
+            fetch(`/api/admin/reports/bookings?start=${start}&end=${end}`),
+            fetch(`/api/admin/reports/revenue?start=${start}&end=${end}`)
+        ]);
 
+        const dataBooking = await resBooking.json();
+        const dataRevenue = await resRevenue.json();
+
+        // กราฟยอดจอง
         renderBookingChart(
             dataBooking.map(i => i.book_date),
             dataBooking.map(i => parseInt(i.total_bookings))
         );
 
-        // 🔸 กราฟรายรับ
-        const resRevenue = await fetch(`/api/admin/reports/revenue?start=${start}&end=${end}`);
-        const dataRevenue = await resRevenue.json();
-
+        // กราฟรายรับ
         renderRevenueChart(
             dataRevenue.map(i => i.book_date),
             dataRevenue.map(i => parseFloat(i.daily_revenue || 0))
         );
 
-        // 🔸 รวมยอดรายรับ
+        // รวมยอดรายรับ
         const total = dataRevenue.reduce(
-            (sum, item) => sum + parseFloat(item.daily_revenue || 0),
-            0
+            (sum, item) => sum + parseFloat(item.daily_revenue || 0), 0
         );
-
         document.getElementById('totalRevenueText').innerText =
             total.toLocaleString('th-TH', {
                 minimumFractionDigits: 2,
@@ -89,9 +77,10 @@ async function loadBookingAndRevenue() {
     }
 }
 
+// ── โหลดกราฟห้องว่าง ──
 async function loadAvailableRooms() {
     const start = document.getElementById('startDate1').value;
-    const end = document.getElementById('endDate1').value;
+    const end   = document.getElementById('endDate1').value;
 
     if (!start || !end) return;
 
@@ -111,6 +100,7 @@ async function loadAvailableRooms() {
     }
 }
 
+// ── Render functions ──
 function renderBookingChart(labels, data) {
     const ctx = document.getElementById('bookingChart').getContext('2d');
     if (bookingChart) bookingChart.destroy();
@@ -186,12 +176,15 @@ function renderAvailableRoomChart(labels, data) {
     });
 }
 
+// ── Navigation ──
 function goManageRoom() {
     window.location.href = '/manageRoom-owner.html';
 }
 function goManagebooking() {
     window.location.href = '/managebooking-owner.html';
 }
+
+// ── Logout ──
 document.getElementById("logoutBtn").addEventListener("click", logout);
 function logout() {
     if (confirm("ต้องการออกจากระบบหรือไม่?")) {

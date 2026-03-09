@@ -28,8 +28,14 @@ app.use('/api/bookingowner', require('./routes/bookingowner'));
 app.use('/api/admin/bookings', require('./routes/bookingowner'));
 app.use('/api/admin/employees', require('./routes/employee-owner'));
 app.use('/api/admin/customers', require('./routes/customer-owner'));
-app.use('/api/admin/reports', require('./routes/report-owner'));
 
+// report-owner routes
+app.use('/api/admin/reports',      require('./routes/report-owner'));  // กราฟ 3 ตัว
+app.use('/api/admin/rooms',        require('./routes/report-owner'));  // GET / → สถานะห้อง
+
+// bookings: CRUD ใช้ bookingowner, /recent ใช้ report-owner
+app.use('/api/admin/bookings',     require('./routes/bookingowner'));
+app.use('/api/admin/bookings',     require('./routes/report-owner'));  // เพิ่ม /recent
 app.use('/api/upload', require('./routes/upload'));
 
 // ตรวจ booking หมดเวลา

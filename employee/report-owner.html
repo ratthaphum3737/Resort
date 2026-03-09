@@ -1,62 +1,159 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <title>Booking Report</title>
-    <link rel="stylesheet" href="/css/managebooking-owner.css"> 
-    <link rel="stylesheet" href="/css/report-owner.css"> 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resort Owner Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/report-owner.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-    <div class="sidebar">
-        <h2 class="logo">Resort Admin</h2>
-        <nav>
-            <ul>
-                <li onclick="goManageRoom()">Manage Rooms</li>
-                <li onclick="goManagebooking()">Manage Booking</li>
-                <li onclick="window.location.href='manageMember-owner.html'">Manage Members</li>
-                <li onclick="window.location.href='report-owner.html'" class="active">Reports</li>
-                <li id="logoutBtn">Logout</li>
-            </ul>
-        </nav>
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">🏨</div>
+    <div class="brand-title">Resort Admin</div>
+    <div class="brand-sub">Owner Portal</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-label">เมนูหลัก</div>
+    <div class="nav-item" onclick="window.location.href='manageRoom-owner.html'">
+      <span class="icon">🛏️</span> Manage Rooms
     </div>
-
-    <div class="main-content">
-        <h1>รายงานสถิติ (Reports)</h1>
-
-        <div class="filter-box" style="flex-direction: column; align-items: flex-start;">
-            <h4 style="margin: 0 0 10px 0; color: #2c3e50;">ช่วงวันที่ทำรายการ (วันที่ลูกค้ากดจอง)</h4>
-            <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-                <label>ตั้งแต่:</label>
-                <input type="date" id="startDate1">
-                <label>ถึง:</label>
-                <input type="date" id="endDate1">
-            </div>
-            <h2 style="margin-top: 15px; color: #2c3e50; border-top: 1px dashed #ccc; padding-top: 15px; width: 100%;">
-                ยอดรายรับรวมสุทธิ: <span id="totalRevenueText" style="color: #e74c3c; font-size: 1.2em;">0.00</span> บาท
-            </h2>
-        </div>
-
-        <div class="chart-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div class="chart-wrapper">
-                <h3 class="chart-title">จำนวนการจอง (รายการ)</h3>
-                <canvas id="bookingChart"></canvas>
-            </div>
-            <div class="chart-wrapper">
-                <h3 class="chart-title">รายรับรวม (บาท)</h3>
-                <canvas id="revenueChart"></canvas>
-            </div>
-        </div>
-
-        <div class="chart-container" style="grid-column: 1 / -1;">
-            <div class="chart-wrapper">
-                <h3 class="chart-title">จำนวนห้องที่ว่าง (ห้อง)</h3>
-                <canvas id="availableRoomChart"></canvas>
-            </div>
-        </div>
+    <div class="nav-item" onclick="window.location.href='managebooking-owner.html'">
+      <span class="icon">📋</span> Manage Booking
     </div>
+    <div class="nav-item" onclick="window.location.href='manageMember-owner.html'">
+      <span class="icon">👥</span> Manage Members
+    </div>
+    <div class="nav-label">วิเคราะห์</div>
+    <div class="nav-item active">
+      <span class="icon">📊</span> Reports &amp; Dashboard
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="owner-badge">
+      <div class="owner-avatar" id="ownerInitial">O</div>
+      <div>
+        <div class="owner-name" id="ownerName">Owner</div>
+        <div class="owner-role">Resort Owner</div>
+      </div>
+    </div>
+    <button class="logout-btn" id="logoutBtn">🚪 ออกจากระบบ</button>
+  </div>
+</div>
 
-    <script src="/js/report-owner.js"></script>
+<!-- MAIN -->
+<div class="main-content">
+
+  <div class="page-header">
+    <div>
+      <div class="page-title">Owner Dashboard</div>
+      <div class="page-sub">ภาพรวมการดำเนินงานและสถิติรีสอร์ท</div>
+    </div>
+    <div class="date-badge" id="todayBadge">—</div>
+  </div>
+
+  <!-- FILTER -->
+  <div class="filter-box">
+    <div>
+      <div class="filter-label">📅 ช่วงวันที่ทำรายการ</div>
+      <div class="filter-row">
+        <label>ตั้งแต่:</label>
+        <input type="date" id="startDate1">
+        <label>ถึง:</label>
+        <input type="date" id="endDate1">
+        <button class="btn-apply" onclick="reloadAllReports()">ค้นหา</button>
+      </div>
+    </div>
+    <div class="revenue-pill">
+      <div class="revenue-label">💰 รายรับสุทธิ</div>
+      <div class="revenue-value" id="totalRevenueText">—</div>
+    </div>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="kpi-grid">
+    <div class="kpi-card k1">
+      <div class="kpi-icon">📅</div>
+      <div class="kpi-value" id="kpiTotalBookings">—</div>
+      <div class="kpi-label">การจองทั้งหมด</div>
+    </div>
+    <div class="kpi-card k2">
+      <div class="kpi-icon">💵</div>
+      <div class="kpi-value" id="kpiTotalRevenue">—</div>
+      <div class="kpi-label">รายรับรวม (บาท)</div>
+    </div>
+    <div class="kpi-card k3">
+      <div class="kpi-icon">🏠</div>
+      <div class="kpi-value" id="kpiAvgRooms">—</div>
+      <div class="kpi-label">ห้องว่างเฉลี่ย (ห้อง)</div>
+    </div>
+    <div class="kpi-card k4">
+      <div class="kpi-icon">📈</div>
+      <div class="kpi-value" id="kpiAvgDaily">—</div>
+      <div class="kpi-label">รายรับเฉลี่ย/วัน (บาท)</div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW 1 -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3 class="chart-title">📦 จำนวนการจอง (รายการ)</h3>
+        <span class="chart-badge">รายวัน</span>
+      </div>
+      <div class="chart-wrapper">
+        <div id="bookingChartWrap" class="loading-wrap"><div class="spinner"></div> กำลังโหลด...</div>
+        <canvas id="bookingChart" style="display:none"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3 class="chart-title">💰 รายรับรวม (บาท)</h3>
+        <span class="chart-badge">รายวัน</span>
+      </div>
+      <div class="chart-wrapper">
+        <div id="revenueChartWrap" class="loading-wrap"><div class="spinner"></div> กำลังโหลด...</div>
+        <canvas id="revenueChart" style="display:none"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHART ROW 2 — FULL WIDTH -->
+  <div class="chart-card chart-full">
+    <div class="chart-header">
+      <h3 class="chart-title">🛏️ จำนวนห้องว่างรายวัน</h3>
+      <span class="chart-badge">Occupancy Trend</span>
+    </div>
+    <div class="chart-wrapper">
+      <div id="availableChartWrap" class="loading-wrap"><div class="spinner"></div> กำลังโหลด...</div>
+      <canvas id="availableRoomChart" style="display:none"></canvas>
+    </div>
+  </div>
+
+  <!-- BOTTOM ROW: ROOM STATUS + RECENT BOOKINGS -->
+  <div class="bottom-row">
+    <div class="table-card">
+      <div class="chart-header">
+        <h3 class="chart-title">🏠 สถานะห้องพัก</h3>
+        <span class="chart-badge" id="roomCountBadge">—</span>
+      </div>
+      <div id="roomTableArea"><div class="loading-wrap"><div class="spinner"></div> กำลังโหลด...</div></div>
+    </div>
+    <div class="table-card">
+      <div class="chart-header">
+        <h3 class="chart-title">📋 การจองล่าสุด</h3>
+        <span class="chart-badge">Recent</span>
+      </div>
+      <div id="recentBookingArea"><div class="loading-wrap"><div class="spinner"></div> กำลังโหลด...</div></div>
+    </div>
+  </div>
+
+</div><!-- end main-content -->
+
+<script src="/js/report-owner.js"></script>
 </body>
 </html>
