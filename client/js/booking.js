@@ -8,10 +8,8 @@ const weekdays = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
 let roomPrice = 0;
 let servicesData = [];
 let selectedDates = [];
-checkin = null;
-checkout = null;
-const rangeStart = document.getElementById('rangeStart');
-const rangeEnd = document.getElementById('rangeEnd');
+let rangeStart, rangeEnd;
+
 
 const weekRow = document.getElementById('calendar-weekdays');
 weekRow.innerHTML = '';
@@ -278,7 +276,6 @@ function updateSummary() {
       name: cb.parentElement.textContent.trim(),
       price: Number(cb.dataset.price)
     }));
-
   const serviceTotal = selectedServices.reduce((sum, s) => sum + (s.price*nights), 0);
   const grandTotal = roomTotal + serviceTotal;
 
@@ -323,13 +320,17 @@ async function confirmBooking() {
     window.location.href = `/guest-info.html?rid=${rid}&checkin=${checkin}&checkout=${checkout}&numPeople=${numPeople}`;
     return;
   }
+   // ดึง service ที่เลือก
+  const selectedServices = [...document.querySelectorAll('#services input:checked')]
+    .map(cb => cb.value);
 
   const payload = {
     cid: userId,
     rid,
     checkin,
     checkout,
-    num_people: numPeople
+    num_people: numPeople,
+    services: selectedServices
   };
 
   const res = await fetch(
@@ -423,6 +424,9 @@ function goMyBooking() {
 const username = localStorage.getItem("username");
 
 window.onload = () => {
+  rangeStart = document.getElementById('rangeStart');
+  rangeEnd = document.getElementById('rangeEnd');
+  
   renderAuth();
   loadServices();
 

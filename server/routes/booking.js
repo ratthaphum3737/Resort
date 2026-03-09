@@ -90,7 +90,7 @@ router.get('/:cid', async (req, res) => {
     FROM booking b
     JOIN booking_room br ON b.bid = br.bid
     JOIN room r ON br.rid = r.rid
-    WHERE b.cid = $1
+    WHERE b.cid = $1 and bstatus
     GROUP BY b.bid
     ORDER BY b.bcheckin_date DESC
     `,
@@ -104,7 +104,7 @@ router.get('/:cid', async (req, res) => {
 // POST /api/booking
 router.post('/create_booking', async (req, res) => {
   console.log('CREATE BOOKING HIT');
-  const { cid,num_people, rid, checkin, checkout,} = req.body;
+  const { cid,num_people, rid, checkin, checkout,services} = req.body;
 
   const conn = await pool.connect();
   try {
@@ -118,7 +118,16 @@ router.post('/create_booking', async (req, res) => {
       FROM booking
     `);
     const bid = bidRes.rows[0].bid;
-
+    
+    if (services && services.length > 0) {
+      for (const sid of services) {
+        await conn.query(
+          `INSERT INTO booking_service (bid, sid)
+          VALUES ($1,$2)`,
+          [bid, sid]
+        );
+      }
+    }
     //insert booking (Pending)
     await conn.query(
       `
@@ -155,34 +164,116 @@ router.post('/create_booking', async (req, res) => {
   }
 });
 
+// ================= CONFIRM BOOKING + AUTO ASSIGN TASKS =================
 router.post("/confirm-booking", async (req, res) => {
-
   const { bid } = req.body;
+  const conn = await pool.connect();
 
   try {
+    await conn.query('BEGIN');
 
-    await pool.query(
-      `
-      UPDATE booking
-      SET bstatus = 'Confirmed'
-      WHERE bid = $1
-      `,
+    // 1. เปลี่ยนสถานะ booking เป็น Confirmed
+    await conn.query(
+      `UPDATE booking SET bstatus = 'Confirmed' WHERE bid = $1`,
       [bid]
     );
 
-    res.json({
-      success: true,
-      status: "Confirmed"
-    });
+    // 2. ดึงข้อมูล booking (checkin, checkout, rid)
+    const bookingRes = await conn.query(
+      `SELECT b.bcheckin_date, b.bcheckout_date, br.rid
+       FROM booking b
+       JOIN booking_room br ON b.bid = br.bid
+       WHERE b.bid = $1`,
+      [bid]
+    );
+
+    if (bookingRes.rows.length === 0) {
+      await conn.query('ROLLBACK');
+      return res.status(404).json({ error: 'booking not found' });
+    }
+
+    const { bcheckin_date, bcheckout_date, rid } = bookingRes.rows[0];
+
+    // 3. สร้าง list วันที่ต้องทำงาน (checkin ถึง checkout - 1 วัน)
+    const daysRes = await conn.query(
+      `SELECT generate_series($1::DATE, $2::DATE - INTERVAL '1 day', INTERVAL '1 day')::DATE AS work_date`,
+      [bcheckin_date, bcheckout_date]
+    );
+    const workDates = daysRes.rows.map(r => r.work_date);
+
+    // 4. แจกงานแต่ละวัน
+    for (const workDate of workDates) {
+
+      // หาประเภทงานตามวัน
+      // - วันแรก (checkin): เตรียมห้องพัก
+      // - วันกลาง: ทำความสะอาด
+      // - วันสุดท้าย (checkout - 1): ทำความสะอาด + ซ่อมบำรุง (checkin = checkout - 1 วัน)
+      const isFirstDay = workDate.toISOString().split('T')[0] === new Date(bcheckin_date).toISOString().split('T')[0];
+      const taskType = isFirstDay ? 'เตรียมห้องพัก' : 'ทำความสะอาด';
+      const taskName = isFirstDay ? `เตรียมห้องพัก ${rid}` : `ทำความสะอาดห้อง ${rid}`;
+
+      // หาพนักงานที่มีงานน้อยสุดในวันนั้น
+      const empRes = await conn.query(
+        `SELECT e.empid
+         FROM employee e
+         LEFT JOIN employee_task et ON e.empid = et.empid
+         LEFT JOIN task t ON et.tid = t.tid AND t.tdate = $1
+         GROUP BY e.empid
+         ORDER BY COUNT(t.tid) ASC
+         LIMIT 1`,
+        [workDate]
+      );
+
+      if (empRes.rows.length === 0) continue;
+      const empid = empRes.rows[0].empid;
+
+      // สร้าง Tid ใหม่
+      const tidRes = await conn.query(
+        `SELECT 'T' || LPAD(
+          (COALESCE(MAX(CAST(SUBSTRING(tid,2) AS INT)),0)+1)::text
+        ,4,'0') AS tid FROM task`
+      );
+      const tid = tidRes.rows[0].tid;
+
+      // INSERT task
+      await conn.query(
+        `INSERT INTO task (tid, tdate, taskname, tasktype, tstatus)
+         VALUES ($1, $2, $3, $4, 'Pending')`,
+        [tid, workDate, taskName, taskType]
+      );
+
+      // ผูก task กับ booking
+      await conn.query(
+        `INSERT INTO booking_task (tid, bid) VALUES ($1, $2)`,
+        [tid, bid]
+      );
+
+      // ผูก task กับห้อง
+      await conn.query(
+        `INSERT INTO room_task (tid, rid) VALUES ($1, $2)`,
+        [tid, rid]
+      );
+
+      // ผูก task กับพนักงาน
+      await conn.query(
+        `INSERT INTO employee_task (empid, tid) VALUES ($1, $2)`,
+        [empid, tid]
+      );
+    }
+
+    await conn.query('COMMIT');
+    res.json({ success: true, status: 'Confirmed' });
 
   } catch (err) {
+    await conn.query('ROLLBACK');
     console.error(err);
-    res.status(500).json({
-      error: "confirm booking failed"
-    });
+    res.status(500).json({ error: 'confirm booking failed' });
+  } finally {
+    conn.release();
   }
-
 });
+
+
 
 router.post("/cancel-expired-bookings", async (req, res) => {
 
