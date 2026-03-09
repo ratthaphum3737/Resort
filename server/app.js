@@ -16,7 +16,7 @@ app.use(express.static(path.join(__dirname, '../client')));
 app.use(express.static(path.join(__dirname, '../employee')));
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/Home.html"));
+  res.sendFile(path.join(__dirname, "../client/home.html"));
 });
 
 app.use('/api/rooms', require('./routes/room.js'));
