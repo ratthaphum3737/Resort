@@ -48,6 +48,7 @@ body {
 }
 
 
+
 .brand-title {
   font-family: 'Playfair Display', serif;
   font-size: 18px;
@@ -81,7 +82,31 @@ body {
 
 .nav-item {
   display: flex;
-  
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: rgba(255,255,255,.65);
+  font-size: 14px;
+  transition: all .2s;
+  margin-bottom: 2px;
+}
+
+.nav-item:hover {
+  background: rgba(255,255,255,.07);
+  color: #fff;
+}
+
+.nav-item.active {
+  background: #c8a84b;
+  color: #1f3c88;
+  font-weight: 600;
+}
+
+.nav-item .icon {
+  font-size: 17px;
+  width: 20px;
   text-align: center;
 }
 
