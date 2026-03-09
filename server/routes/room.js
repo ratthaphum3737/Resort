@@ -191,6 +191,29 @@ router.get('/:rid', async (req, res) => {
   }
 });
 
+// update room status
+router.put('/:rid', async (req, res) => {
+  try {
+    const { rid } = req.params;
+    const { rstatus } = req.body;
+
+    await pool.query(
+      `UPDATE room
+       SET rstatus = $1
+       WHERE rid = $2`,
+      [rstatus, rid]
+    );
+
+    res.json({
+      success: true,
+      message: "Room status updated"
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'update room failed' });
+  }
+});
 
 
 module.exports = router;

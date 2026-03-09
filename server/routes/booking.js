@@ -120,15 +120,6 @@ router.post('/create_booking', async (req, res) => {
     `);
     const bid = bidRes.rows[0].bid;
 
-    if (services && services.length > 0) {
-      for (const sid of services) {
-        await conn.query(
-          `INSERT INTO booking_service (bid, sid)
-          VALUES ($1,$2)`,
-          [bid, sid]
-        );
-      }
-    }
     //insert booking (Pending)
     await conn.query(
       `
@@ -147,7 +138,7 @@ router.post('/create_booking', async (req, res) => {
       `,
       [bid, rid]
     );
-
+    
     await conn.query('COMMIT');
 
     res.json({
