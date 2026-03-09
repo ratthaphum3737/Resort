@@ -8,8 +8,10 @@ const weekdays = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
 let roomPrice = 0;
 let servicesData = [];
 let selectedDates = [];
-let rangeStart, rangeEnd;
-
+checkin = null;
+checkout = null;
+const rangeStart = document.getElementById('rangeStart');
+const rangeEnd = document.getElementById('rangeEnd');
 
 const weekRow = document.getElementById('calendar-weekdays');
 weekRow.innerHTML = '';
@@ -44,7 +46,7 @@ async function loadCalendar() {
   }
 
   const res = await fetch(
-    `/api/bookings/availability?rid=${rid}&start=${start}&end=${end}`
+    `http://localhost:3000/api/bookings/availability?rid=${rid}&start=${start}&end=${end}`
   );
   const days = await res.json();
 
@@ -162,7 +164,7 @@ function selectDate(date, element) {
 }
 
 async function loadServices() {
-  const res = await fetch('/api/bookings/service');
+  const res = await fetch('http://localhost:3000/api/bookings/service');
   const services = await res.json();
 
   const container = document.getElementById('services');
@@ -224,10 +226,10 @@ function highlightRange() {
 
 async function loadRoomInfo() {
 
-  const res = await fetch(`/api/rooms/${rid}`);
+  const res = await fetch(`http://localhost:3000/api/rooms/${rid}`);
   const room = await res.json();
 
-  const imgRes = await fetch(`/api/rooms/${rid}/images`);
+  const imgRes = await fetch(`http://localhost:3000/api/rooms/${rid}/images`);
   const images = await imgRes.json();
 
   roomPrice = Number(room.rprice);
@@ -316,12 +318,13 @@ async function confirmBooking() {
     alert('กรุณาเลือกวันเข้าพักและวันออก');
     return;
   }
-
   // ถ้าไม่ได้ login → ไปหน้ากรอกข้อมูล guest
   if (!userId) {
     window.location.href = `/guest-info.html?rid=${rid}&checkin=${checkin}&checkout=${checkout}&numPeople=${numPeople}`;
     return;
   }
+
+  const payload = {
     cid: userId,
     rid,
     checkin,
@@ -330,7 +333,7 @@ async function confirmBooking() {
   };
 
   const res = await fetch(
-    '/api/bookings/create_booking',
+    'http://localhost:3000/api/bookings/create_booking',
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -348,7 +351,7 @@ async function confirmBooking() {
   // ส่ง OTP
   console.log("EMAIL:", localStorage.getItem("email"));
   const otpRes = await fetch(
-    "/api/send-otp",
+    "http://localhost:3000/api/send-otp",
     {
       method:"POST",
       headers:{
@@ -417,13 +420,11 @@ function goMyBooking() {
   window.location.href = "/booking-history.html";
 }
 
+const username = localStorage.getItem("username");
 
 window.onload = () => {
   renderAuth();
   loadServices();
-
-  rangeStart = document.getElementById('rangeStart');
-  rangeEnd = document.getElementById('rangeEnd');
 
   const today = new Date();
   const todayStr = today.toISOString().split('T')[0];
