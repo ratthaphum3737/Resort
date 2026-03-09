@@ -45,4 +45,23 @@ router.put("/booking/reject/:bid", async (req, res) => {
 
   res.json({ message: "Rejected" });
 });
+
+// อัปเดตสถานะการจองตามที่เลือกใน Dropdown
+router.put("/update-status/:bid", async (req, res) => {
+  try {
+    const { bid } = req.params;
+    const { status } = req.body; // รับค่า status ใหม่จากหน้าเว็บ
+
+    await pool.query(
+      "UPDATE booking SET bstatus = $1 WHERE bid = $2",
+      [status, bid]
+    );
+
+    res.json({ message: "Status updated successfully" });
+  } catch (err) {
+    console.error("Error updating status:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
 module.exports = router;
