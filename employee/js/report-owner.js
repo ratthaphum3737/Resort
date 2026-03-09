@@ -1,12 +1,15 @@
+// ─────────────────────────────────────────
+// report-owner.js  (Frontend / client/js/)
+// ─────────────────────────────────────────
 let bookingChart;
 let revenueChart;
 let availableRoomChart;
 
-// ── สร้าง array วันทุกวันในช่วง start → end (YYYY-MM-DD) ──
+// ── สร้าง array ทุกวันในช่วง start → end ──
 function buildDateRange(start, end) {
     const dates = [];
-    const cur = new Date(start);
-    const last = new Date(end);
+    const cur   = new Date(start);
+    const last  = new Date(end);
     while (cur <= last) {
         dates.push(cur.toISOString().split('T')[0]);
         cur.setDate(cur.getDate() + 1);
@@ -14,7 +17,7 @@ function buildDateRange(start, end) {
     return dates;
 }
 
-// ── map ข้อมูลจาก API ให้ตรงกับทุกวันในช่วง (วันที่ไม่มีข้อมูล = 0) ──
+// ── map ข้อมูล API → ทุกวันในช่วง (วันที่ไม่มีข้อมูล = 0) ──
 function fillDateSeries(dateRange, apiData, dateKey, valueKey) {
     const map = {};
     apiData.forEach(row => { map[row[dateKey]] = row[valueKey]; });
@@ -23,7 +26,24 @@ function fillDateSeries(dateRange, apiData, dateKey, valueKey) {
 
 // ── init ──
 document.addEventListener("DOMContentLoaded", () => {
-    const today = new Date();
+
+    // แสดงวันที่วันนี้
+    const todayBadge = document.getElementById('todayBadge');
+    if (todayBadge) {
+        todayBadge.textContent = new Date().toLocaleDateString('th-TH', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+    }
+
+    // แสดงชื่อ owner จาก localStorage
+    const fname = localStorage.getItem('Fname') || 'Owner';
+    const ownerName    = document.getElementById('ownerName');
+    const ownerInitial = document.getElementById('ownerInitial');
+    if (ownerName)    ownerName.textContent    = fname;
+    if (ownerInitial) ownerInitial.textContent = fname.charAt(0).toUpperCase();
+
+    // ตั้งค่าวันที่เริ่มต้น (7 วันย้อนหลัง)
+    const today    = new Date();
     const lastWeek = new Date();
     lastWeek.setDate(today.getDate() - 7);
 
@@ -40,10 +60,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     ['input', 'change'].forEach(evt => {
         startInput.addEventListener(evt, reloadAllReports);
-        endInput.addEventListener(evt, reloadAllReports);
+        endInput.addEventListener(evt,   reloadAllReports);
     });
 
     reloadAllReports();
+    loadRoomStatus();
+    loadRecentBookings();
 });
 
 function reloadAllReports() {
@@ -51,72 +73,178 @@ function reloadAllReports() {
     loadAvailableRooms();
 }
 
-// ── โหลดกราฟยอดจอง + รายรับ ──
+// ── 1. กราฟยอดจอง + รายรับ + KPI ──
 async function loadBookingAndRevenue() {
     const start = document.getElementById('startDate1').value;
     const end   = document.getElementById('endDate1').value;
-
     if (!start || !end) return;
 
     try {
-        const [resBooking, resRevenue] = await Promise.all([
+        const [resB, resR] = await Promise.all([
             fetch(`/api/admin/reports/bookings?start=${start}&end=${end}`),
             fetch(`/api/admin/reports/revenue?start=${start}&end=${end}`)
         ]);
 
-        const dataBooking = await resBooking.json();
-        const dataRevenue = await resRevenue.json();
+        const dataB = await resB.json();
+        const dataR = await resR.json();
 
-        // สร้าง date range ครบทุกวัน
+        // สร้าง date range ครบทุกวันในช่วง
         const dateRange = buildDateRange(start, end);
 
-        // fill ข้อมูล — วันที่ไม่มีการจองหรือรายรับ จะได้ค่า 0
-        const bookingValues = fillDateSeries(dateRange, dataBooking, 'book_date', 'total_bookings');
-        const revenueValues = fillDateSeries(dateRange, dataRevenue, 'book_date', 'daily_revenue');
+        // fill ข้อมูล — วันที่ไม่มีข้อมูลได้ค่า 0 ทำให้กราฟแสดงครบทุกวัน
+        const bookingValues = fillDateSeries(dateRange, dataB, 'book_date', 'total_bookings');
+        const revenueValues = fillDateSeries(dateRange, dataR, 'book_date', 'daily_revenue');
 
+        // ── KPI ──
+        const totalBookings = bookingValues.reduce((s, v) => s + v, 0);
+        const totalRevenue  = revenueValues.reduce((s, v) => s + v, 0);
+        const days          = dateRange.length || 1;
+
+        const kpiB = document.getElementById('kpiTotalBookings');
+        const kpiR = document.getElementById('kpiTotalRevenue');
+        const kpiD = document.getElementById('kpiAvgDaily');
+        const pill = document.getElementById('totalRevenueText');
+
+        if (kpiB) kpiB.textContent = totalBookings.toLocaleString('th-TH');
+        if (kpiR) kpiR.textContent = formatBaht(totalRevenue, 0) + ' ฿';
+        if (kpiD) kpiD.textContent = formatBaht(totalRevenue / days, 0) + ' ฿';
+        if (pill) pill.textContent = totalRevenue.toLocaleString('th-TH', {
+            minimumFractionDigits: 2, maximumFractionDigits: 2
+        }) + ' บาท';
+
+        // ── กราฟ (ส่ง dateRange ที่ครบทุกวัน) ──
         renderBookingChart(dateRange, bookingValues);
         renderRevenueChart(dateRange, revenueValues);
 
-        // รวมยอดรายรับ
-        const total = revenueValues.reduce((sum, v) => sum + v, 0);
-        document.getElementById('totalRevenueText').innerText =
-            total.toLocaleString('th-TH', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-
     } catch (err) {
-        console.error("Error loading booking/revenue report:", err);
+        console.error("loadBookingAndRevenue error:", err);
     }
 }
 
-// ── โหลดกราฟห้องว่าง ──
+// ── 2. กราฟห้องว่าง + KPI ──
 async function loadAvailableRooms() {
     const start = document.getElementById('startDate1').value;
     const end   = document.getElementById('endDate1').value;
-
     if (!start || !end) return;
 
     try {
-        const resAvail = await fetch(
-            `/api/admin/reports/available-rooms?start=${start}&end=${end}`
-        );
-        const dataAvail = await resAvail.json();
+        const res  = await fetch(`/api/admin/reports/available-rooms?start=${start}&end=${end}`);
+        const data = await res.json();
 
-        // available-rooms backend ส่งครบทุกวันอยู่แล้ว (generate_series)
+        const avg = data.length
+            ? data.reduce((s, i) => s + parseInt(i.available_rooms || 0), 0) / data.length
+            : 0;
+        const kpiA = document.getElementById('kpiAvgRooms');
+        if (kpiA) kpiA.textContent = avg.toFixed(1);
+
+        // available-rooms backend ใช้ generate_series ส่งครบทุกวันอยู่แล้ว
         renderAvailableRoomChart(
-            dataAvail.map(i => i.book_date),
-            dataAvail.map(i => parseInt(i.available_rooms))
+            data.map(i => i.book_date),
+            data.map(i => parseInt(i.available_rooms))
         );
 
     } catch (err) {
-        console.error("Error loading available rooms report:", err);
+        console.error("loadAvailableRooms error:", err);
+    }
+}
+
+// ── 3. ตารางสถานะห้องพัก ──
+async function loadRoomStatus() {
+    const area  = document.getElementById('roomTableArea');
+    const badge = document.getElementById('roomCountBadge');
+    if (!area) return;
+
+    try {
+        const res  = await fetch('/api/admin/rooms');
+        const data = await res.json();
+
+        if (badge) badge.textContent = `${data.length} ห้อง`;
+
+        if (!data.length) {
+            area.innerHTML = '<p style="padding:16px;color:#6b7a99;font-size:13px;">ไม่พบข้อมูลห้อง</p>';
+            return;
+        }
+
+        const rows = data.map(r => {
+            const status = r.rstatus || r.RStatus || '-';
+            const cls    = status === 'Available' ? 'badge-available'
+                         : status === 'Booked'    ? 'badge-booked'
+                         : 'badge-maintenance';
+            return `<tr>
+                <td><strong>${r.rnum || r.RNum || '-'}</strong></td>
+                <td>${r.rtype || r.RType || '-'}</td>
+                <td>${parseInt(r.rprice || r.RPrice || 0).toLocaleString('th-TH')} ฿</td>
+                <td><span class="badge ${cls}">${status}</span></td>
+            </tr>`;
+        }).join('');
+
+        area.innerHTML = `
+            <table>
+                <thead><tr><th>ห้อง</th><th>ประเภท</th><th>ราคา/คืน</th><th>สถานะ</th></tr></thead>
+                <tbody>${rows}</tbody>
+            </table>`;
+
+    } catch (err) {
+        console.error("loadRoomStatus error:", err);
+        if (area) area.innerHTML = '<p style="padding:16px;color:#e74c3c;font-size:13px;">⚠️ โหลดข้อมูลห้องไม่ได้</p>';
+    }
+}
+
+// ── 4. ตารางการจองล่าสุด ──
+async function loadRecentBookings() {
+    const area = document.getElementById('recentBookingArea');
+    if (!area) return;
+
+    try {
+        const res  = await fetch('/api/admin/bookings/recent?limit=8');
+        const data = await res.json();
+
+        if (!data.length) {
+            area.innerHTML = '<p style="padding:16px;color:#6b7a99;font-size:13px;">ไม่พบข้อมูลการจอง</p>';
+            return;
+        }
+
+        const rows = data.map(b => {
+            const status = b.bstatus || b.BStatus || '-';
+            const cls    = status === 'Confirmed' ? 'tag-confirmed'
+                         : status === 'Pending'   ? 'tag-pending'
+                         : 'tag-cancelled';
+            const rawDate = b.bdate || b.BDate;
+            const d = rawDate
+                ? new Date(rawDate).toLocaleDateString('th-TH', {
+                    day: '2-digit', month: 'short', year: '2-digit'
+                  })
+                : '-';
+            const name = b.customer_name || b.cid || b.Cid || '-';
+            return `<tr>
+                <td><strong>${b.bid || b.Bid || '-'}</strong></td>
+                <td>${name}</td>
+                <td>${d}</td>
+                <td><span class="${cls}">${status}</span></td>
+            </tr>`;
+        }).join('');
+
+        area.innerHTML = `
+            <table>
+                <thead><tr><th>Booking ID</th><th>ลูกค้า</th><th>วันที่จอง</th><th>สถานะ</th></tr></thead>
+                <tbody>${rows}</tbody>
+            </table>`;
+
+    } catch (err) {
+        console.error("loadRecentBookings error:", err);
+        if (area) area.innerHTML = '<p style="padding:16px;color:#e74c3c;font-size:13px;">⚠️ โหลดข้อมูลการจองไม่ได้</p>';
     }
 }
 
 // ── Render: จำนวนการจอง (line — 1 จุดต่อวัน) ──
 function renderBookingChart(labels, data) {
-    const ctx = document.getElementById('bookingChart').getContext('2d');
+    const wrap   = document.getElementById('bookingChartWrap');
+    const canvas = document.getElementById('bookingChart');
+    if (!canvas) return;
+    if (wrap) wrap.style.display = 'none';
+    canvas.style.display = 'block';
+
+    const ctx = canvas.getContext('2d');
     if (bookingChart) bookingChart.destroy();
 
     bookingChart = new Chart(ctx, {
@@ -127,11 +255,11 @@ function renderBookingChart(labels, data) {
                 label: 'จำนวนการจอง (รายการ)',
                 data,
                 borderColor: '#e67e22',
-                backgroundColor: 'rgba(230, 126, 34, 0.15)',
-                borderWidth: 2,
+                backgroundColor: 'rgba(230,126,34,0.15)',
+                borderWidth: 2.5,
                 fill: true,
-                tension: 0,             // เส้นตรง → แต่ละวันชัดเจน
-                pointRadius: 5,         // แสดงจุดทุกวัน
+                tension: 0,               // เส้นตรง → แต่ละวันแยกชัด
+                pointRadius: 5,           // จุดทุกวัน
                 pointHoverRadius: 7,
                 pointBackgroundColor: '#e67e22',
                 pointBorderColor: '#fff',
@@ -141,22 +269,12 @@ function renderBookingChart(labels, data) {
         options: {
             responsive: true,
             plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: ctx => ` ${ctx.parsed.y} รายการ`
-                    }
-                }
+                legend: { display: false },
+                tooltip: { callbacks: { label: c => ` ${c.parsed.y} รายการ` } }
             },
             scales: {
-                x: {
-                    ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 14 },
-                    grid: { display: false }
-                },
-                y: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 1 },
-                    grid: { color: '#f0f0f0' }
-                }
+                y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f0f0f0' } },
+                x: { ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 14 }, grid: { display: false } }
             }
         }
     });
@@ -164,7 +282,13 @@ function renderBookingChart(labels, data) {
 
 // ── Render: รายรับรวม (bar — 1 แท่งต่อวัน) ──
 function renderRevenueChart(labels, data) {
-    const ctx = document.getElementById('revenueChart').getContext('2d');
+    const wrap   = document.getElementById('revenueChartWrap');
+    const canvas = document.getElementById('revenueChart');
+    if (!canvas) return;
+    if (wrap) wrap.style.display = 'none';
+    canvas.style.display = 'block';
+
+    const ctx = canvas.getContext('2d');
     if (revenueChart) revenueChart.destroy();
 
     revenueChart = new Chart(ctx, {
@@ -174,41 +298,38 @@ function renderRevenueChart(labels, data) {
             datasets: [{
                 label: 'รายรับรวม (บาท)',
                 data,
-                backgroundColor: 'rgba(46, 204, 113, 0.75)',
-                borderColor: '#27ae60',
-                borderWidth: 1,
-                borderRadius: 4,        // มุมโค้งแท่ง
+                backgroundColor: 'rgba(26,188,156,0.75)',
+                borderColor: '#15967c',
+                borderWidth: 1.5,
+                borderRadius: 5,
                 borderSkipped: false,
-                barPercentage: 0.6,     // ความกว้างแท่ง
+                barPercentage: 0.6,       // 1 แท่งต่อวัน ไม่แน่น
                 categoryPercentage: 0.8
             }]
         },
         options: {
             responsive: true,
             plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: ctx => ` ${ctx.parsed.y.toLocaleString('th-TH')} บาท`
-                    }
-                }
+                legend: { display: false },
+                tooltip: { callbacks: { label: c => ` ${c.parsed.y.toLocaleString('th-TH')} บาท` } }
             },
             scales: {
-                x: {
-                    ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 14 },
-                    grid: { display: false }
-                },
-                y: {
-                    beginAtZero: true,
-                    grid: { color: '#f0f0f0' }
-                }
+                y: { beginAtZero: true, grid: { color: '#f0f0f0' } },
+                x: { ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 14 }, grid: { display: false } }
             }
         }
     });
 }
 
-// ── Render: ห้องว่างรายวัน (bar) ──
+// ── Render: ห้องว่างรายวัน (bar — 1 แท่งต่อวัน) ──
 function renderAvailableRoomChart(labels, data) {
-    const ctx = document.getElementById('availableRoomChart').getContext('2d');
+    const wrap   = document.getElementById('availableChartWrap');
+    const canvas = document.getElementById('availableRoomChart');
+    if (!canvas) return;
+    if (wrap) wrap.style.display = 'none';
+    canvas.style.display = 'block';
+
+    const ctx = canvas.getContext('2d');
     if (availableRoomChart) availableRoomChart.destroy();
 
     availableRoomChart = new Chart(ctx, {
@@ -218,9 +339,9 @@ function renderAvailableRoomChart(labels, data) {
             datasets: [{
                 label: 'จำนวนห้องว่าง (ห้อง)',
                 data,
-                backgroundColor: 'rgba(52, 152, 219, 0.75)',
+                backgroundColor: 'rgba(52,152,219,0.75)',
                 borderColor: '#2980b9',
-                borderWidth: 1,
+                borderWidth: 1.5,
                 borderRadius: 4,
                 borderSkipped: false,
                 barPercentage: 0.6,
@@ -230,43 +351,33 @@ function renderAvailableRoomChart(labels, data) {
         options: {
             responsive: true,
             plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: ctx => ` ${ctx.parsed.y} ห้อง`
-                    }
-                }
+                legend: { display: false },
+                tooltip: { callbacks: { label: c => ` ${c.parsed.y} ห้อง` } }
             },
             scales: {
-                x: {
-                    ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 14 },
-                    grid: { display: false }
-                },
-                y: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 1 },
-                    grid: { color: '#f0f0f0' }
-                }
+                y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f0f0f0' } },
+                x: { ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 14 }, grid: { display: false } }
             }
         }
     });
 }
 
-// ── Navigation ──
-function goManageRoom() {
-    window.location.href = '/manageRoom-owner.html';
-}
-function goManagebooking() {
-    window.location.href = '/managebooking-owner.html';
+// ── Helpers ──
+function formatBaht(n, digits = 2) {
+    return parseFloat(n || 0).toLocaleString('th-TH', {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits
+    });
 }
 
+// ── Navigation ──
+function goManageRoom()    { window.location.href = '/manageRoom-owner.html'; }
+function goManagebooking() { window.location.href = '/managebooking-owner.html'; }
+
 // ── Logout ──
-document.getElementById("logoutBtn").addEventListener("click", logout);
-function logout() {
+document.getElementById("logoutBtn").addEventListener("click", () => {
     if (confirm("ต้องการออกจากระบบหรือไม่?")) {
-        localStorage.removeItem("userId");
-        localStorage.removeItem("Fname");
-        localStorage.removeItem("erole");
-        localStorage.removeItem("role");
+        ['userId', 'Fname', 'erole', 'role'].forEach(k => localStorage.removeItem(k));
         window.location.href = "/login.html";
     }
-}
+});
