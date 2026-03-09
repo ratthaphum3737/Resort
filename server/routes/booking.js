@@ -90,12 +90,13 @@ router.get('/:cid', async (req, res) => {
     FROM booking b
     JOIN booking_room br ON b.bid = br.bid
     JOIN room r ON br.rid = r.rid
-    WHERE b.cid = $1 and bstatus
+    WHERE b.cid = $1 AND b.bstatus = 'Confirmed'
     GROUP BY b.bid
     ORDER BY b.bcheckin_date DESC
     `,
     [cid]
   );
+
 
   res.json(result.rows);
 });
