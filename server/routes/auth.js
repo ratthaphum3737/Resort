@@ -1,11 +1,22 @@
 const express = require('express');
 const jwt = require("jsonwebtoken");
-/*const nodemailer = require("nodemailer");*/
+const nodemailer = require("nodemailer");
 const pool = require('../db');
 const router = express.Router();
-const { Resend } = require('resend');
-const resend = new Resend(process.env.RESEND_API_KEY);
+//const { Resend } = require('resend');
+//const resend = new Resend(process.env.RESEND_API_KEY);
 
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
 
 router.post('/login', async (req, res) => {
   console.log('LOGIN API HIT');
@@ -144,7 +155,7 @@ router.post('/create_guest', async (req, res) => {
        (id_number, tel, email, cpassword, cid, fname, lname, ctype)
        VALUES ($1,$2,$3,NULL,$4,$5,$6,'guest')
        RETURNING cid`,
-      [id_number, tel, email, cid, fname, lname]
+      [id_number, tel, email, cidResult, fname, lname]
     );
 
     res.json({ cid: result.rows[0].cid });
@@ -157,6 +168,7 @@ router.post('/create_guest', async (req, res) => {
 
 
 // ================= SEND OTP =================
+
 router.post("/send-otp", async (req, res) => {
   const { email } = req.body;
 
@@ -168,7 +180,7 @@ router.post("/send-otp", async (req, res) => {
     { expiresIn: "5m" }
   );
 
-  try {
+  try {/*
     await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: email,
@@ -177,13 +189,24 @@ router.post("/send-otp", async (req, res) => {
         <h2>OTP Verification</h2>
         <p>Your OTP is:</p>
         <h1>${otp}</h1>
-        <p>This code will expire in 5 minutes.</p>
+        <p>This code will expire in 15 minutes.</p>
       `
     });
 
     res.json({
       message: "OTP sent to email",
       token: token
+    });*/
+    await transporter.sendMail({
+      from: `"Resort Booking" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "OTP Verification",
+      html: `
+        <h2>OTP Verification</h2>
+        <p>Your OTP is:</p>
+        <h1>${otp}</h1>
+        <p>This code expires in 15 minutes.</p>
+      `
     });
 
   } catch (err) {
