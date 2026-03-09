@@ -152,7 +152,7 @@ function renderRoomCard(room) {
 
     <div class="room-info">
       <h3>${room.rtype}</h3>
-      <p>ห้อง ${room.rnum}</p>
+      <p>จำนวนผู้เข้าพัก ${room.rnum}</p>
       <p>${room.rdesc || ''}</p>
     </div>
 
