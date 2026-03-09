@@ -118,7 +118,7 @@ router.post('/create_booking', async (req, res) => {
       FROM booking
     `);
     const bid = bidRes.rows[0].bid;
-    
+
     if (services && services.length > 0) {
       for (const sid of services) {
         await conn.query(
@@ -207,20 +207,42 @@ router.post("/confirm-booking", async (req, res) => {
       // หาประเภทงานตามวัน
       // - วันแรก (checkin): เตรียมห้องพัก
       // - วันกลาง: ทำความสะอาด
-      // - วันสุดท้าย (checkout - 1): ทำความสะอาด + ซ่อมบำรุง (checkin = checkout - 1 วัน)
-      const isFirstDay = workDate.toISOString().split('T')[0] === new Date(bcheckin_date).toISOString().split('T')[0];
-      const taskType = isFirstDay ? 'เตรียมห้องพัก' : 'ทำความสะอาด';
-      const taskName = isFirstDay ? `เตรียมห้องพัก ${rid}` : `ทำความสะอาดห้อง ${rid}`;
+      // - วันสุดท้าย (checkout - 1): ทำความสะอาด
+      const workDateStr = workDate.toISOString().split('T')[0];
+      const checkinStr = new Date(bcheckin_date).toISOString().split('T')[0];
 
-      // หาพนักงานที่มีงานน้อยสุดในวันนั้น
+      const lastDay = new Date(bcheckout_date);
+      lastDay.setDate(lastDay.getDate() - 1);
+      const lastDayStr = lastDay.toISOString().split('T')[0];
+
+      let taskType;
+      let taskName;
+
+      // วันแรก → เตรียมห้องพัก
+      if (workDateStr === checkinStr) {
+        taskType = "service";
+        taskName = `เตรียมห้องพัก ${rid}`;
+      }
+      // วันสุดท้าย → ทำความสะอาด (ไม่ต้อง Maintenance)
+      else if (workDateStr === lastDayStr) {
+        taskType = "service";
+        taskName = `ทำความสะอาดห้อง ${rid}`;
+      }
+      // วันกลาง → ทำความสะอาด
+      else {
+        taskType = "service";
+        taskName = `ทำความสะอาดห้อง ${rid}`;
+      }
+      // หาพนักงาน Housekeeper ที่มีงานน้อยสุดในวันนั้น
       const empRes = await conn.query(
         `SELECT e.empid
-         FROM employee e
-         LEFT JOIN employee_task et ON e.empid = et.empid
-         LEFT JOIN task t ON et.tid = t.tid AND t.tdate = $1
-         GROUP BY e.empid
-         ORDER BY COUNT(t.tid) ASC
-         LIMIT 1`,
+        FROM employee e
+        LEFT JOIN employee_task et ON e.empid = et.empid
+        LEFT JOIN task t ON et.tid = t.tid AND t.tdate = $1
+        WHERE e.role = 'Housekeeper'
+        GROUP BY e.empid
+        ORDER BY COUNT(t.tid) ASC
+        LIMIT 1`,
         [workDate]
       );
 
