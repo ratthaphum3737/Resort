@@ -61,11 +61,11 @@ async function submitUpdate() {
 // logout
 function logout() {
   localStorage.clear();
-  window.location.href = '/Home.html';
+  window.location.href = '/home.html';
 }
 
 function goback() {
-  window.location.href = "/Login.html";
+  window.location.href = "/login.html";
 }
 
 function toggleEdit(id, checkbox) {

@@ -40,7 +40,7 @@ async function login() {
     if (returnUrl) {
       window.location.href = returnUrl;
     } else {
-      window.location.href = '/Home.html';
+      window.location.href = '/home.html';
     }
   }
 }

@@ -40,7 +40,7 @@ function formatDate(date) {
 }
 
 function goHome() {
-  window.location.href = '/Home.html';
+  window.location.href = '/home.html';
 }
 
 loadBookingHistory();

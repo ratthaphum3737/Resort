@@ -110,7 +110,7 @@ function logout() {
   localStorage.removeItem('userRole');
   localStorage.removeItem('userId'); 
   localStorage.removeItem('Fname');
-  window.location.href = '/Home.html';
+  window.location.href = '/home.html';
 }
 
 

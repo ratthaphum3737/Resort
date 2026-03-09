@@ -140,7 +140,7 @@ async function verifyOtp(){
 
     alert("ยืนยันการจองสำเร็จ");
 
-    window.location.href="/Home.html";
+    window.location.href="/home.html";
 
   }catch(err){
     console.error(err);
