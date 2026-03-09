@@ -22,7 +22,7 @@ body {
   left: 0;
   width: 240px;
   height: 100vh;
-  background-color: #0f1f3d;
+  background-color: #1f3c88;
   color: #ffffff;
   display: flex;
   flex-direction: column;
@@ -103,7 +103,7 @@ body {
 
 .nav-item.active {
   background: #c8a84b;
-  color: #0f1f3d;
+  color: #1f3c88;
   font-weight: 600;
 }
 
@@ -137,7 +137,7 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 15px;
-  color: #0f1f3d;
+  color: #1f3c88;
   font-weight: 700;
   flex-shrink: 0;
 }
@@ -195,7 +195,7 @@ body {
 .page-title {
   font-family: 'Playfair Display', serif;
   font-size: 30px;
-  color: #0f1f3d;
+  color: #1f3c88;
 }
 
 .page-sub {
@@ -218,7 +218,7 @@ body {
    FILTER BOX
 ═══════════════════════════════════════ */
 .filter-box {
-  background: #0f1f3d;
+  background: #1f3c88;
   border-radius: 14px;
   padding: 20px 24px;
   display: flex;
@@ -287,7 +287,7 @@ body {
   background: #c8a84b;
   border: none;
   border-radius: 8px;
-  color: #0f1f3d;
+  color: #1f3c88;
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
@@ -427,7 +427,7 @@ body {
 .chart-title {
   font-family: 'Playfair Display', serif;
   font-size: 16px;
-  color: #0f1f3d;
+  color: #1f3c88;
   text-align: left;
   margin: 0;
 }
