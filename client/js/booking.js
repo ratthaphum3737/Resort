@@ -8,8 +8,7 @@ const weekdays = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
 let roomPrice = 0;
 let servicesData = [];
 let selectedDates = [];
-checkin = null;
-checkout = null;
+let rangeStart, rangeEnd;
 
 
 const weekRow = document.getElementById('calendar-weekdays');
@@ -318,7 +317,11 @@ async function confirmBooking() {
     return;
   }
 
-  const payload = {
+  // ถ้าไม่ได้ login → ไปหน้ากรอกข้อมูล guest
+  if (!userId) {
+    window.location.href = `/guest-info.html?rid=${rid}&checkin=${checkin}&checkout=${checkout}&numPeople=${numPeople}`;
+    return;
+  }
     cid: userId,
     rid,
     checkin,
@@ -414,20 +417,13 @@ function goMyBooking() {
   window.location.href = "/booking-history.html";
 }
 
-const username = localStorage.getItem("username");
-if (username) {
-  document.getElementById("usernameDisplay").textContent = username;
-}
-
-
-
 
 window.onload = () => {
   renderAuth();
   loadServices();
 
-  const rangeStart = document.getElementById('rangeStart');
-  const rangeEnd = document.getElementById('rangeEnd');
+  rangeStart = document.getElementById('rangeStart');
+  rangeEnd = document.getElementById('rangeEnd');
 
   const today = new Date();
   const todayStr = today.toISOString().split('T')[0];

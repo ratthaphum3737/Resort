@@ -150,7 +150,7 @@ router.post('/create_guest', async (req, res) => {
         (COALESCE(MAX(CAST(SUBSTRING(cid,2) AS INT)),0)+1)::text
       ,4,'0') AS cid FROM customer`
     );
-    const cid = cidResult.rows[0].cid;
+
     // ===== INSERT ให้ถูกต้อง =====
     const result = await pool.query(
       `INSERT INTO customer
