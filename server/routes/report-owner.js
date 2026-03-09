@@ -1,26 +1,23 @@
 const express = require('express');
-const router = express.Router();
-const pool = require('../db');
+const router  = express.Router();
+const pool    = require('../db');
 
 // ─────────────────────────────────────────────────────────────
-// mount ใน server.js:
-//   app.use('/api/admin/reports',  require('./routes/report-owner'))
-//   app.use('/api/admin/rooms',    require('./routes/report-owner'))
-//   app.use('/api/admin/bookings', require('./routes/report-owner'))  ← เฉพาะ /recent
+// ทุก route ใช้ Bcheckin_date เป็นแกนวัน (วันที่ผู้ใช้เข้าพัก)
 // ─────────────────────────────────────────────────────────────
 
-// 1. ยอดการจองรายวัน
+// 1. จำนวนการจองรายวัน (นับตาม check-in date)
 //    GET /api/admin/reports/bookings?start=&end=
 router.get("/bookings", async (req, res) => {
   try {
     const { start, end } = req.query;
     const result = await pool.query(`
-      SELECT TO_CHAR(BDate, 'YYYY-MM-DD') AS book_date,
+      SELECT TO_CHAR(Bcheckin_date, 'YYYY-MM-DD') AS book_date,
              COUNT(*) AS total_bookings
       FROM Booking
-      WHERE BDate >= $1 AND BDate <= $2
-      GROUP BY TO_CHAR(BDate, 'YYYY-MM-DD')
-      ORDER BY 1 ASC
+      WHERE Bcheckin_date >= $1 AND Bcheckin_date <= $2
+      GROUP BY Bcheckin_date
+      ORDER BY Bcheckin_date ASC
     `, [start, end]);
     res.json(result.rows);
   } catch (err) {
@@ -29,20 +26,20 @@ router.get("/bookings", async (req, res) => {
   }
 });
 
-// 2. รายรับรายวัน
+// 2. รายรับรายวัน (นับตาม check-in date)
 //    GET /api/admin/reports/revenue?start=&end=
 router.get("/revenue", async (req, res) => {
   try {
     const { start, end } = req.query;
     const result = await pool.query(`
-      SELECT TO_CHAR(b.BDate, 'YYYY-MM-DD') AS book_date,
+      SELECT TO_CHAR(b.Bcheckin_date, 'YYYY-MM-DD') AS book_date,
              SUM(r.RPrice) AS daily_revenue
       FROM Booking b
       JOIN Booking_Room br ON b.Bid = br.Bid
-      JOIN Room r ON br.Rid = r.Rid
-      WHERE b.BDate >= $1 AND b.BDate <= $2
-      GROUP BY TO_CHAR(b.BDate, 'YYYY-MM-DD')
-      ORDER BY 1 ASC
+      JOIN Room r          ON br.Rid = r.Rid
+      WHERE b.Bcheckin_date >= $1 AND b.Bcheckin_date <= $2
+      GROUP BY b.Bcheckin_date
+      ORDER BY b.Bcheckin_date ASC
     `, [start, end]);
     res.json(result.rows);
   } catch (err) {
@@ -51,7 +48,7 @@ router.get("/revenue", async (req, res) => {
   }
 });
 
-// 3. ห้องว่างรายวัน
+// 3. ห้องว่างรายวัน (คงเดิม — ใช้ช่วง checkin/checkout อยู่แล้ว)
 //    GET /api/admin/reports/available-rooms?start=&end=
 router.get("/available-rooms", async (req, res) => {
   try {
@@ -81,7 +78,7 @@ router.get("/available-rooms", async (req, res) => {
 });
 
 // 4. รายชื่อห้องทั้งหมด + สถานะ
-//    GET /api/admin/rooms  (router mount บน "/" เพราะ prefix คือ /api/admin/rooms แล้ว)
+//    GET /api/admin/rooms
 router.get("/", async (req, res) => {
   try {
     const result = await pool.query(`
@@ -96,7 +93,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// 5. การจองล่าสุด
+// 5. การจองล่าสุด (เรียงตาม check-in date ล่าสุด)
 //    GET /api/admin/bookings/recent?limit=8
 router.get("/recent", async (req, res) => {
   try {
@@ -108,7 +105,7 @@ router.get("/recent", async (req, res) => {
              c.Fname || ' ' || c.Lname AS customer_name
       FROM Booking b
       LEFT JOIN Customer c ON b.Cid = c.Cid
-      ORDER BY b.BDate DESC
+      ORDER BY b.Bcheckin_date DESC
       LIMIT $1
     `, [limit]);
     res.json(result.rows);
