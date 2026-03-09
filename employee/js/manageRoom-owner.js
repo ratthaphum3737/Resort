@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", loadRooms);
 
-const API_URL = "http://localhost:3000/api/rooms/room_getdata";
+const API_URL = "/api/rooms/room_getdata";
 
 const imageInput = document.getElementById("roomImages");
 const preview = document.getElementById("preview");
@@ -98,7 +98,7 @@ document.getElementById("addRoomForm").addEventListener("submit", async function
     const rprice = document.getElementById("price").value;
     const rnum = document.getElementById("num").value;
 
-    const res = await fetch("http://localhost:3000/api/rooms", {
+    const res = await fetch("/api/rooms", {
         method: "POST",
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify({ rtype, rprice, rnum })
@@ -132,7 +132,7 @@ document.getElementById("addRoomForm").addEventListener("submit", async function
             formData.append("images", roomFiles[i]);
         }
 
-        await fetch("http://localhost:3000/api/upload/room-image", {
+        await fetch("/api/upload/room-image", {
             method: "POST",
             body: formData
         });
@@ -150,7 +150,7 @@ document.getElementById("addRoomForm").addEventListener("submit", async function
 function updateRoom(rid) {
     const newStatus = document.getElementById(`status-${rid}`).value;
 
-    fetch(`http://localhost:3000/api/rooms/${rid}`, {
+    fetch(`/api/rooms/${rid}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ rstatus: newStatus })
@@ -162,7 +162,7 @@ function updateRoom(rid) {
     });
 }
 function deleteRoom(rid) {
-    fetch(`http://localhost:3000/api/rooms/${rid}`, {
+    fetch(`/api/rooms/${rid}`, {
         method: "DELETE"
     })
         .then(res => res.json())

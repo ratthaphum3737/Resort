@@ -3,7 +3,7 @@ async function login() {
   const password = document.getElementById('password').value;
   const role = document.getElementById('role').value;
 
-  const res = await fetch('http://localhost:3000/api/login', {
+  const res = await fetch('/api/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password, role })

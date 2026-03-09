@@ -12,7 +12,7 @@ async function loadTasks(statusFilter) {
   const empid = localStorage.getItem('userId');
 
   try {
-    const res = await fetch(`http://localhost:3000/api/staff/tasks?empid=${empid}`);
+    const res = await fetch(`/api/staff/tasks?empid=${empid}`);
     const allTasks = await res.json();
     
 
@@ -89,7 +89,7 @@ async function completeTask(taskId) {
   const confirmAction = confirm(`ยืนยันว่าทำงาน ${taskId} เสร็จสิ้นแล้วใช่หรือไม่?`);
   if (confirmAction) {
     try {
-      const res = await fetch(`http://localhost:3000/api/staff/tasks/${taskId}`, {
+      const res = await fetch(`/api/staff/tasks/${taskId}`, {
         method: 'PUT' 
       });
       

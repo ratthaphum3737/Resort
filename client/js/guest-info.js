@@ -35,7 +35,7 @@ async function loadGuestData() {
   if (id.length !== 13) return;
 
   const res = await fetch(
-    `http://localhost:3000/api/guest/${id}`
+    `/api/guest/${id}`
   );
 
   const data = await res.json();
@@ -74,7 +74,7 @@ async function submitGuestBooking() {
 
     // ===== CREATE CUSTOMER =====
     const customerRes = await fetch(
-      "http://localhost:3000/api/create_guest",
+      "/api/create_guest",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -97,7 +97,7 @@ async function submitGuestBooking() {
 
     // ===== CREATE BOOKING =====
     const bookingRes = await fetch(
-      "http://localhost:3000/api/bookings/create_booking",
+      "/api/bookings/create_booking",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -121,7 +121,7 @@ async function submitGuestBooking() {
 
     // ===== SEND OTP =====
     const otpRes = await fetch(
-      "http://localhost:3000/api/send-otp",
+      "/api/send-otp",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

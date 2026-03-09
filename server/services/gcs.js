@@ -1,10 +1,14 @@
 const { Storage } = require('@google-cloud/storage');
 
 const storage = new Storage({
-  keyFilename: "./my-project-resort-489604-d377a0b55373.json"
+  projectId: process.env.GCS_PROJECT_ID,
+  credentials: {
+    client_email: process.env.GCS_CLIENT_EMAIL,
+    private_key: process.env.GCS_PRIVATE_KEY?.replace(/\\n/g, '\n')
+  }
 });
 
-const bucketName = "image-room"; // ชื่อ bucket
+const bucketName = process.env.GCS_BUCKET_NAME || "image-room";
 
 const bucket = storage.bucket(bucketName);
 

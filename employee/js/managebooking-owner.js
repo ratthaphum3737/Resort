@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", loadBookings);
 
 async function loadBookings() {
   try {
-    const res = await fetch(`http://localhost:3000/api/bookingowner/databooking`);   
+    const res = await fetch(`/api/bookingowner/databooking`);   
     const data = await res.json();
     
 

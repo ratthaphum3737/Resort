@@ -55,7 +55,7 @@ async function resendOtp(){
   try{
 
     const res = await fetch(
-      "http://localhost:3000/api/send-otp",
+      "/api/send-otp",
       {
         method:"POST",
         headers:{
@@ -100,7 +100,7 @@ async function verifyOtp(){
   try{
 
     const res = await fetch(
-      "http://localhost:3000/api/verify-otp",
+      "/api/verify-otp",
       {
         method:"POST",
         headers:{
@@ -121,7 +121,7 @@ async function verifyOtp(){
     }
 
     const confirmRes = await fetch(
-      "http://localhost:3000/api/bookings/confirm-booking",
+      "/api/bookings/confirm-booking",
       {
         method:"POST",
         headers:{

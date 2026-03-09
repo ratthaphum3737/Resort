@@ -6,7 +6,7 @@ if (!userId) {
 }
 
 async function loadBookingHistory() {
-  const res = await fetch(`http://localhost:3000/api/bookings/${userId}`);
+  const res = await fetch(`/api/bookings/${userId}`);
   const bookings = await res.json();
 
   const table = document.getElementById('bookingTable');

@@ -7,7 +7,7 @@ if (!userId) {
 
 // โหลดข้อมูลผู้ใช้
 async function loadProfile() {
-  const res = await fetch(`http://localhost:3000/api/profile/${userId}`);
+  const res = await fetch(`/api/profile/${userId}`);
   const data = await res.json();
   originalData = data;
   document.getElementById('fname').value = data.fname;
@@ -43,7 +43,7 @@ async function submitUpdate() {
     return;
   }
 
-  const res = await fetch(`http://localhost:3000/api/profile/${cid}`, {
+  const res = await fetch(`/api/profile/${cid}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updateData)

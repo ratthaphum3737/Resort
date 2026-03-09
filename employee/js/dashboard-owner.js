@@ -1,6 +1,6 @@
 console.log("Dashboard JS Loaded");
 async function loadDashboard() {
-    const res = await fetch("http://localhost:3000/api/dashboard/summary");
+    const res = await fetch("/api/dashboard/summary");
     const data = await res.json();
 
     document.querySelectorAll(".card-value")[0].innerText = data.todayRevenue;
