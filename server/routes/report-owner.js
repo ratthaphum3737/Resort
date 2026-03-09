@@ -35,24 +35,14 @@ router.get("/revenue", async (req, res) => {
   try {
     const { start, end } = req.query;
     const result = await pool.query(`
-      WITH stay_days AS (
-        SELECT
-          generate_series(b.Bcheckin_date, b.Bcheckout_date - 1, '1 day'::interval)::date AS stay_date,
-          r.RPrice
-        FROM Booking b
-        JOIN Booking_Room br ON b.Bid = br.Bid
-        JOIN Room r ON br.Rid = r.Rid
-        WHERE b.BStatus != 'Cancelled'
-          AND b.Bcheckin_date <= $2::date
-          AND b.Bcheckout_date >  $1::date
-      )
-      SELECT
-        TO_CHAR(stay_date, 'YYYY-MM-DD') AS book_date,
-        SUM(RPrice) AS daily_revenue
-      FROM stay_days
-      WHERE stay_date >= $1::date AND stay_date <= $2::date
-      GROUP BY stay_date
-      ORDER BY stay_date ASC
+      SELECT TO_CHAR(b.BDate, 'YYYY-MM-DD') AS book_date,
+             SUM(r.RPrice) AS daily_revenue
+      FROM Booking b
+      JOIN Booking_Room br ON b.Bid = br.Bid
+      JOIN Room r ON br.Rid = r.Rid
+      WHERE b.BDate >= $1 AND b.BDate <= $2
+      GROUP BY TO_CHAR(b.BDate, 'YYYY-MM-DD')
+      ORDER BY 1 ASC
     `, [start, end]);
     res.json(result.rows);
   } catch (err) {
