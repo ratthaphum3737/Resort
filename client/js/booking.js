@@ -46,7 +46,7 @@ async function loadCalendar() {
   }
 
   const res = await fetch(
-    `http://localhost:3000/api/bookings/availability?rid=${rid}&start=${start}&end=${end}`
+    `/api/bookings/availability?rid=${rid}&start=${start}&end=${end}`
   );
   const days = await res.json();
 
@@ -164,7 +164,7 @@ function selectDate(date, element) {
 }
 
 async function loadServices() {
-  const res = await fetch('http://localhost:3000/api/bookings/service');
+  const res = await fetch('/api/bookings/service');
   const services = await res.json();
 
   const container = document.getElementById('services');
@@ -226,10 +226,10 @@ function highlightRange() {
 
 async function loadRoomInfo() {
 
-  const res = await fetch(`http://localhost:3000/api/rooms/${rid}`);
+  const res = await fetch(`/api/rooms/${rid}`);
   const room = await res.json();
 
-  const imgRes = await fetch(`http://localhost:3000/api/rooms/${rid}/images`);
+  const imgRes = await fetch(`/api/rooms/${rid}/images`);
   const images = await imgRes.json();
 
   roomPrice = Number(room.rprice);
@@ -333,7 +333,7 @@ async function confirmBooking() {
   };
 
   const res = await fetch(
-    'http://localhost:3000/api/bookings/create_booking',
+    '/api/bookings/create_booking',
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -351,7 +351,7 @@ async function confirmBooking() {
   // ส่ง OTP
   console.log("EMAIL:", localStorage.getItem("email"));
   const otpRes = await fetch(
-    "http://localhost:3000/api/send-otp",
+    "/api/send-otp",
     {
       method:"POST",
       headers:{
