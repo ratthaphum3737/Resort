@@ -3,17 +3,14 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const router = express.Router();
 const pool = require('../db');
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
+  service: "gmail",
   auth: {
-    user: "uxuig04@gmail.com",
-    pass: "vcop eeix flav ymwo"
-  },
-  tls: {
-    rejectUnauthorized: false
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   }
 });
 
