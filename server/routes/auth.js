@@ -170,7 +170,7 @@ router.post("/send-otp", async (req, res) => {
 
   try {
     await resend.emails.send({
-      from: 'onboarding@send.lectozs.online',
+      from: 'onboarding@lectozs.online',
       to: email,
       subject: "Your OTP Code",
       html: `
