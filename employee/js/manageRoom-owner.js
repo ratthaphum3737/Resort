@@ -97,11 +97,14 @@ document.getElementById("addRoomForm").addEventListener("submit", async function
     const rtype = document.getElementById("roomType").value;
     const rprice = document.getElementById("price").value;
     const rnum = document.getElementById("num").value;
+    const rdesc = document.getElementById("rdesc").value;
+
+
 
     const res = await fetch("/api/rooms", {
         method: "POST",
         headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({ rtype, rprice, rnum })
+        body: JSON.stringify({ rtype, rprice, rnum,rdesc})
     });
     if(!checkImages()){
         return;

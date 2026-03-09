@@ -71,7 +71,7 @@ router.get('/filters/meta', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
 
-    const { rnum, rtype, rprice } = req.body;
+    const { rnum, rtype, rprice,rdesc } = req.body;
 
     const rstatus = "Available";
 
@@ -86,9 +86,9 @@ router.post('/', async (req, res) => {
     const rid = ridResult.rows[0].rid;
 
     await pool.query(
-      `INSERT INTO room (rid, rnum, rtype, rprice, rstatus)
-       VALUES ($1,$2,$3,$4,$5)`,
-      [rid, rnum, rtype, rprice, rstatus]
+      `INSERT INTO room (rid, rnum, rtype, rprice, rstatus,rdesc)
+       VALUES ($1,$2,$3,$4,$5,$6)`,
+      [rid, rnum, rtype, rprice, rstatus,rdesc]
     );
 
     res.json({
