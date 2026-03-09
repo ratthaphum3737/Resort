@@ -235,15 +235,15 @@ router.post("/confirm-booking", async (req, res) => {
       }
       // หาพนักงาน Housekeeper ที่มีงานน้อยสุดในวันนั้น
       const empRes = await conn.query(
-        `SELECT e.empid
-        FROM employee e
-        LEFT JOIN employee_task et ON e.empid = et.empid
-        LEFT JOIN task t ON et.tid = t.tid AND t.tdate = $1
-        WHERE e.role = 'Housekeeper'
-        GROUP BY e.empid
-        ORDER BY COUNT(t.tid) ASC
-        LIMIT 1`,
-        [workDate]
+      `SELECT e.empid
+      FROM employee e
+      LEFT JOIN employee_task et ON e.empid = et.empid
+      LEFT JOIN task t ON et.tid = t.tid AND t.tdate = $1::DATE
+      WHERE e.role = 'Housekeeper'
+      GROUP BY e.empid
+      ORDER BY COUNT(t.tid) ASC
+      LIMIT 1`,
+      [workDate]
       );
 
       if (empRes.rows.length === 0) continue;
