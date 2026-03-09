@@ -3,20 +3,9 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const pool = require('../db');
 const router = express.Router();
-//const { Resend } = require('resend');
-//const resend = new Resend(process.env.RESEND_API_KEY);
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const nodemailer = require("nodemailer");
-
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
 
 router.post('/login', async (req, res) => {
   console.log('LOGIN API HIT');
@@ -180,7 +169,7 @@ router.post("/send-otp", async (req, res) => {
     { expiresIn: "5m" }
   );
 
-  try {/*
+  try {
     await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: email,
@@ -196,17 +185,6 @@ router.post("/send-otp", async (req, res) => {
     res.json({
       message: "OTP sent to email",
       token: token
-    });*/
-    await transporter.sendMail({
-      from: `"Resort Booking" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "OTP Verification",
-      html: `
-        <h2>OTP Verification</h2>
-        <p>Your OTP is:</p>
-        <h1>${otp}</h1>
-        <p>This code expires in 15 minutes.</p>
-      `
     });
 
   } catch (err) {
