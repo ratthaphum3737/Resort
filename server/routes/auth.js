@@ -137,14 +137,13 @@ router.post('/create_guest', async (req, res) => {
         (COALESCE(MAX(CAST(SUBSTRING(cid,2) AS INT)),0)+1)::text
       ,4,'0') AS cid FROM customer`
     );
-
     // ===== INSERT ให้ถูกต้อง =====
     const result = await pool.query(
       `INSERT INTO customer
        (id_number, tel, email, cpassword, cid, fname, lname, ctype)
        VALUES ($1,$2,$3,NULL,$4,$5,$6,'guest')
        RETURNING cid`,
-      [id_number, tel, email, cidResult, fname, lname]
+      [id_number, tel, email, cidResult.rows[0].cid, fname, lname]
     );
 
     res.json({ cid: result.rows[0].cid });
@@ -171,7 +170,7 @@ router.post("/send-otp", async (req, res) => {
 
   try {
     await resend.emails.send({
-      from: 'onboarding@resend.dev',
+      from: 'onboarding@send.lectozs.online',
       to: email,
       subject: "Your OTP Code",
       html: `
@@ -218,7 +217,6 @@ router.post("/verify-otp", (req, res) => {
 
 });
 
-module.exports = router;
 
 /* ===== PROFILE ===== */
 
