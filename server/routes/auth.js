@@ -1,11 +1,15 @@
 const express = require('express');
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
-const router = express.Router();
+/*const nodemailer = require("nodemailer");*/
 const pool = require('../db');
+const router = express.Router();
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const nodemailer = require("nodemailer");
 
+
+
+/*
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
@@ -15,7 +19,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS
   }
 });
-/* ================= LOGIN ================= */
+ ================= LOGIN ================= */
 router.post('/login', async (req, res) => {
   console.log('LOGIN API HIT');
   try {
@@ -101,7 +105,9 @@ router.post('/register', async (req, res) => {
 
     // สร้าง CID อัตโนมัติ
     const cidResult = await pool.query(
-      "SELECT 'C' || LPAD((COUNT(*) + 1)::text, 4, '0') AS cid FROM customer"
+      `SELECT 'C' || LPAD(
+        (COALESCE(MAX(CAST(SUBSTRING(cid,2) AS INT)),0)+1)::text
+      ,4,'0') AS cid FROM customer`
     );
     const cid = cidResult.rows[0].cid;
 
@@ -140,10 +146,11 @@ router.post('/create_guest', async (req, res) => {
 
     // ===== สร้าง CID =====
     const cidResult = await pool.query(
-      "SELECT 'C' || LPAD((COUNT(*) + 1)::text, 4, '0') AS cid FROM customer"
+      `SELECT 'C' || LPAD(
+        (COALESCE(MAX(CAST(SUBSTRING(cid,2) AS INT)),0)+1)::text
+      ,4,'0') AS cid FROM customer`
     );
     const cid = cidResult.rows[0].cid;
-
     // ===== INSERT ให้ถูกต้อง =====
     const result = await pool.query(
       `INSERT INTO customer
@@ -175,9 +182,8 @@ router.post("/send-otp", async (req, res) => {
   );
 
   try {
-
-    await transporter.sendMail({
-      from: '"Booking System" <uxuig04@gmail.com>',
+    await resend.emails.send({
+      from: 'onboarding@resend.dev',
       to: email,
       subject: "Your OTP Code",
       html: `
