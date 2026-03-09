@@ -112,7 +112,9 @@ router.post('/create_booking', async (req, res) => {
 
     //สร้าง bid
     const bidRes = await conn.query(`
-      SELECT 'B' || LPAD((COUNT(*) + 1)::text, 4, '0') AS bid
+      SELECT 'B' || LPAD(
+        (COALESCE(MAX(CAST(SUBSTRING(bid, 2) AS INT)), 0) + 1)::text
+      , 4, '0') AS bid
       FROM booking
     `);
     const bid = bidRes.rows[0].bid;

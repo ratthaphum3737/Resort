@@ -5,10 +5,15 @@ const router = express.Router();
 const pool = require('../db');
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
   auth: {
     user: "uxuig04@gmail.com",
     pass: "vcop eeix flav ymwo"
+  },
+  tls: {
+    rejectUnauthorized: false
   }
 });
 
