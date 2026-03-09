@@ -3,8 +3,6 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const router = express.Router();
 const pool = require('../db');
-const { Resend } = require('resend');
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -13,7 +11,6 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS
   }
 });
-
 /* ================= LOGIN ================= */
 router.post('/login', async (req, res) => {
   console.log('LOGIN API HIT');
