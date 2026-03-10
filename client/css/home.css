@@ -261,52 +261,6 @@ body {
 .user-menu:hover .dropdown { display: block; }
 
 /* ═══════════════════════════════════════
-   HERO STRIP
-═══════════════════════════════════════ */
-.hero-strip {
-  background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 60%, var(--navy-light) 100%);
-  padding: 40px 40px 36px;
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-strip::before {
-  content: '';
-  position: absolute;
-  top: -60px; right: -60px;
-  width: 280px; height: 280px;
-  background: radial-gradient(circle, rgba(200,168,75,.15) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.hero-strip::after {
-  content: '';
-  position: absolute;
-  bottom: -40px; left: 10%;
-  width: 200px; height: 200px;
-  background: radial-gradient(circle, rgba(200,168,75,.08) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.hero-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
-  color: #fff;
-  margin-bottom: 4px;
-}
-
-.hero-sub {
-  font-size: 14px;
-  color: rgba(255,255,255,.5);
-  letter-spacing: .3px;
-}
-
-.hero-sub span {
-  color: var(--gold);
-  font-weight: 600;
-}
-
-/* ═══════════════════════════════════════
    MAIN LAYOUT
 ═══════════════════════════════════════ */
 .container {
