@@ -38,4 +38,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = router; // 🔴 บรรทัดนี้สำคัญมาก ห้ามลืม!
+module.exports = router; 

@@ -1,7 +1,7 @@
-console.log("✅ dashboard route file loaded");
+console.log("dashboard route file loaded");
 const express = require("express");
 const router = express.Router();
-const db = require("../db");   // ถ้า path ต่างกันปรับให้ตรง
+const db = require("../db");   
 
 
 router.get("/summary", async (req, res) => {
@@ -28,5 +28,4 @@ router.get("/summary", async (req, res) => {
     }
 });
 
-// 👇 บรรทัดนี้ห้ามลืม
 module.exports = router;
