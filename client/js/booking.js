@@ -102,11 +102,12 @@ function selectDate(date, element) {
   }
 
   selectedDates.push(date);
-  element.classList.add('selected-day');
 
   if (selectedDates.length === 1) {
+    // ── คลิกวันแรก ──
     checkin  = date;
     checkout = addDays(date, 1);
+    element.classList.add('selected-day');   // OK เพราะยังไม่ sort
     updateSummary();
     return;
   }
@@ -115,12 +116,18 @@ function selectDate(date, element) {
     selectedDates.sort();
     checkin  = selectedDates[0];
     checkout = addDays(selectedDates[1], 1);
+
+    // ── ล้าง selected-day ทั้งหมดก่อน แล้ว re-apply ใหม่หลัง sort ──
+    document.querySelectorAll('.selected-day').forEach(el => {
+      el.classList.remove('selected-day');
+    });
     document.querySelectorAll('.day').forEach(dayEl => {
-      if (dayEl.dataset.date === selectedDates[0] || 
+      if (dayEl.dataset.date === selectedDates[0] ||
           dayEl.dataset.date === selectedDates[1]) {
         dayEl.classList.add('selected-day');
       }
     });
+
     highlightRange();
     updateSummary();
   }
@@ -181,7 +188,6 @@ async function loadRoomInfo() {
     <div class="room-gallery">${gallery}</div>
     <div class="room-detail">
       <h3>${room.rtype}</h3>
-      <p>ห้อง ${room.rid}</p>
       <p>${room.rdesc || ''}</p>
       <div class="room-price">
         <span>ราคาต่อคืน</span>
