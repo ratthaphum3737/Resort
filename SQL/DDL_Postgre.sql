@@ -87,7 +87,7 @@ CREATE TABLE Booking_Service (
     CONSTRAINT XPKBooking_Service PRIMARY KEY (Bid, Sid)
 );
 
-CREATE TABLE Booking_Task (
+CREATE TABLE s (
     Tid CHAR(5) NOT NULL,
     Bid CHAR(5) NOT NULL,
     CONSTRAINT XPKBooking_Task PRIMARY KEY (Tid, Bid)
