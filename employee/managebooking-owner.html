@@ -1,52 +1,71 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Manage Booking - Owner</title>
-    <link rel="stylesheet" href="/css/managebooking-owner.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Booking - Owner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/managebooking-owner.css">
 </head>
-
 <body>
 
-    <div class="sidebar">
-    <h2 class="logo">Resort Admin</h2>
-    <nav>
-        <ul>
-        <li onclick="goManageRoom()">Manage Rooms</li>
-        <li class="active" onclick="goManageBooking()">Manage Booking</li>
-        <li onclick="window.location.href='manageMember-owner.html'">
-            Manage Members
-        </li>
-        <li onclick="window.location.href='report-owner.html'" >
-            Reports
-        </li>
-        <li id="logoutBtn">Logout</li>
-        </ul>
-    </nav>
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-title">Resort Admin</div>
+    <div class="brand-sub">Owner Portal</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-label">เมนูหลัก</div>
+    <div class="nav-item" onclick="goManageRoom()">
+      <span class="icon"></span> Manage Rooms
     </div>
-
-    <div class="main-content">
-        <h1>Manage Bookings</h1>
-
-        <div class="booking-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Booking ID</th>
-                        <th>Customer Name</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="bookingTableBody">
-                </tbody>
-            </table>
-        </div>
-
+    <div class="nav-item active" onclick="goManageBooking()">
+      <span class="icon"></span> Manage Booking
     </div>
-   <script src="/js/managebooking-owner.js"></script>
+    <div class="nav-item" onclick="window.location.href='manageMember-owner.html'">
+      <span class="icon"></span> Manage Members
+    </div>
+    <div class="nav-label">วิเคราะห์</div>
+    <div class="nav-item" onclick="window.location.href='report-owner.html'">
+      <span class="icon"></span> Reports &amp; Dashboard
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="owner-badge">
+      <div class="owner-avatar" id="ownerInitial">O</div>
+      <div>
+        <div class="owner-name" id="ownerName">Owner</div>
+        <div class="owner-role">Resort Owner</div>
+      </div>
+    </div>
+    <button class="logout-btn" id="logoutBtn">🚪 ออกจากระบบ</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-content">
+
+  <div class="page-header">
+    <div>
+      <div class="page-title">Manage Bookings</div>
+      <div class="page-sub">จัดการและอัปเดตสถานะการจองของลูกค้า</div>
+    </div>
+    <div class="date-badge" id="todayBadge">—</div>
+  </div>
+
+  <div class="table-card">
+    <div class="card-header">
+      <h3 class="card-title">📋 รายการจองทั้งหมด</h3>
+      <span class="card-badge" id="bookingCountBadge">กำลังโหลด...</span>
+    </div>
+    <div id="bookingTableArea">
+      <div class="loading-wrap"><div class="spinner"></div> กำลังโหลดข้อมูล...</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="/js/managebooking-owner.js"></script>
 </body>
-
 </html>
