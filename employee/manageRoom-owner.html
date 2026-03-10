@@ -2,127 +2,132 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manage Rooms | Owner</title>
-
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/manageRoom-owner.css">
 </head>
 <body>
 
-  <div class="sidebar">
-    <h2 class="logo">Resort Admin</h2>
-    <nav>
-      <ul>
-        <li class="active" onclick="goManageRoom()">Manage Rooms</li>
-        <li onclick="goManageBooking()">Manage Booking</li>
-        <li onclick="window.location.href='manageMember-owner.html'">
-          Manage Members
-        </li>
-        <li onclick="window.location.href='report-owner.html'">
-          Reports
-        </li>
-        <li id="logoutBtn">Logout</li>
-      </ul>
-    </nav>
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-title">Resort Admin</div>
+    <div class="brand-sub">Owner Portal</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-label">เมนูหลัก</div>
+    <div class="nav-item active" onclick="goManageRoom()">
+      <span class="icon"></span> Manage Rooms
+    </div>
+    <div class="nav-item" onclick="goManageBooking()">
+      <span class="icon"></span> Manage Booking
+    </div>
+    <div class="nav-item" onclick="window.location.href='manageMember-owner.html'">
+      <span class="icon"></span> Manage Members
+    </div>
+    <div class="nav-label">วิเคราะห์</div>
+    <div class="nav-item" onclick="window.location.href='report-owner.html'">
+      <span class="icon"></span> Reports &amp; Dashboard
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="owner-badge">
+      <div class="owner-avatar" id="ownerInitial">O</div>
+      <div>
+        <div class="owner-name" id="ownerName">Owner</div>
+        <div class="owner-role">Resort Owner</div>
+      </div>
+    </div>
+    <button class="logout-btn" id="logoutBtn">🚪 ออกจากระบบ</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-content">
+
+  <div class="page-header">
+    <div>
+      <div class="page-title">Manage Rooms</div>
+      <div class="page-sub">เพิ่ม แก้ไข และจัดการห้องพักของรีสอร์ท</div>
+    </div>
+    <div class="date-badge" id="todayBadge">—</div>
   </div>
 
+  <!-- FORM CARD -->
+  <div class="form-card">
+    <div class="card-header">
+      <h3 class="card-title">เพิ่มห้องพักใหม่</h3>
+      <span class="card-badge">Add Room</span>
+    </div>
 
-  <div class="container">
-
-    <h1>Manage Rooms</h1>
-
-
-    <div class="form-section">
-
-      <form id="addRoomForm" enctype="multipart/form-data">
-
-        <div class="input-row">
-
-          <div>
-            <label>ประเภทห้อง</label>
-            <input type="text" id="roomType" required>
-          </div>
-
-          <div>
-            <label>ราคา</label>
-            <input type="number" id="price" required>
-          </div>
-
-          <div>
-            <label>จำนวนผู้เข้าพัก</label>
-            <input type="number" id="num" required>
-          </div>
-          
-          <div>
-            <label>คำอธิบายห้อง</label>
-            <input type="text" id="rdesc" required>
-          </div>
-
-
+    <form id="addRoomForm" enctype="multipart/form-data">
+      <div class="input-row">
+        <div>
+          <label>ประเภทห้อง</label>
+          <input type="text" id="roomType" placeholder="เช่น Deluxe, Suite" required>
         </div>
+        <div>
+          <label>ราคา (บาท/คืน)</label>
+          <input type="number" id="price" placeholder="0" required>
+        </div>
+        <div>
+          <label>จำนวนผู้เข้าพัก</label>
+          <input type="number" id="num" placeholder="0" required>
+        </div>
+        <div>
+          <label>คำอธิบายห้อง</label>
+          <input type="text" id="rdesc" placeholder="รายละเอียดห้อง" required>
+        </div>
+      </div>
 
-        <div class="upload-section">
-
-          <h3>อัปโหลดรูปห้องพัก</h3>
-          <p class="upload-note">
-            กรุณาอัปโหลดรูปให้ครบ 3 รูป<br>
-            - รูปที่ 1 : รูปหน้าห้อง (แสดงหน้าเว็บไซต์)<br>
-            - รูปที่ 2-3 : รูปภายในห้อง
-          </p>
-
-          <div class="upload-box">
-            <label>รูปหน้าห้อง (เลือกได้ 1 รูป)</label>
-            <input type="file" id="coverImage" accept="image/*">
-          </div>
-
-          <div class="upload-box">
-            <label>รูปภายในห้อง (เลือกได้ 2 รูป)</label>
-            <input type="file" id="roomImages" multiple accept="image/*">
-          </div>
-
-          <div id="preview"></div>
-
+      <div class="upload-section">
+        <h3>อัปโหลดรูปห้องพัก</h3>
+        <p class="upload-note">
+          กรุณาอัปโหลดรูปให้ครบ 3 รูป<br>
+          - รูปที่ 1 : รูปหน้าห้อง (แสดงหน้าเว็บไซต์)<br>
+          - รูปที่ 2-3 : รูปภายในห้อง
+        </p>
+        <div class="upload-box">
+          <label>รูปหน้าห้อง (เลือกได้ 1 รูป)</label>
+          <input type="file" id="coverImage" accept="image/*">
+        </div>
+        <div class="upload-box">
+          <label>รูปภายในห้อง (เลือกได้ 2 รูป)</label>
+          <input type="file" id="roomImages" multiple accept="image/*">
         </div>
         <div id="preview"></div>
+      </div>
 
-        <button type="submit">เพิ่มห้อง</button>
-
-      </form>
-
-    </div>
-    <div class="table-section">
-      <h2>รายการห้องพัก</h2>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Room ID</th>
-            <th>Number of guests</th>
-            <th>Type</th>
-            <th>Price</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="roomTableBody">
-          <!-- JS จะมา render ตรงนี้ -->
-        </tbody>
-      </table>
-    </div>
-
+      <button type="submit" class="btn-submit">เพิ่มห้องพัก</button>
+    </form>
   </div>
 
-  <!-- ===== JS ===== -->
-  <script src="/js/manageRoom-owner.js"></script>
+  <!-- TABLE CARD -->
+  <div class="table-card">
+    <div class="card-header">
+      <h3 class="card-title">รายการห้องพักทั้งหมด</h3>
+      <span class="card-badge" id="roomCountBadge">กำลังโหลด...</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Room ID</th>
+          <th>จำนวนผู้เข้าพัก</th>
+          <th>ประเภทห้อง</th>
+          <th>ราคา/คืน</th>
+          <th>สถานะ</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="roomTableBody">
+        <tr><td colspan="6"><div class="loading-wrap"><div class="spinner"></div> กำลังโหลด...</div></td></tr>
+      </tbody>
+    </table>
+  </div>
 
-  <script>
-    function goManageRoom() {
-      window.location.href = 'manageRoom-owner.html';
-    }
+</div><!-- end main-content -->
 
-    function goManageBooking() {
-      window.location.href = 'managebooking-owner.html';
-    }
-  </script>
-
+<script src="/js/manageRoom-owner.js"></script>
 </body>
 </html>
