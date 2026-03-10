@@ -55,7 +55,7 @@ router.get('/tasks', async (req, res) => {
     
     const tasks = result.rows.map(row => ({
       tid: row.tid,
-      tdetail: row.taskname + (row.rid ? 'ไปที่ห้อง ' + row.rid : '-'),
+      tdetail: row.taskname + + row.rid,
       tdue_date: row.tdue_date,
       tstatus: row.tstatus || 'รอดำเนินการ'
     }));
