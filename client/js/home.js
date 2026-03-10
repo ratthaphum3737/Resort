@@ -32,27 +32,20 @@ function getSelectedPriceRange() {
 }
 
 function setupPriceRange(min, max) {
-  const slider = document.getElementById("priceSlider");
+  const slider     = document.getElementById("priceSlider");
   const priceValue = document.getElementById("priceValue");
-  console.log("min:", minPrice, typeof minPrice);
-  console.log("max:", maxPrice, typeof maxPrice);
 
   priceSlider = noUiSlider.create(slider, {
     start: [min, max],
     connect: true,
-    range: {
-      min: min,
-      max: max
-    },
+    range: { min, max },
     step: 100
   });
 
   priceSlider.on("update", function (values) {
     const minVal = Math.round(values[0]);
     const maxVal = Math.round(values[1]);
-
-    priceValue.innerText =
-      `฿${minVal.toLocaleString()} - ฿${maxVal.toLocaleString()}`;
+    priceValue.innerText = `฿${minVal.toLocaleString()} – ฿${maxVal.toLocaleString()}`;
   });
 
   priceSlider.on("change", function () {
@@ -63,24 +56,18 @@ function setupPriceRange(min, max) {
 function renderTypeCheckbox(types) {
   const box = document.getElementById('rtypeFilters');
   box.innerHTML = '';
-
   types.forEach(type => {
     box.innerHTML += `
       <label>
         <input type="checkbox" value="${type}" onchange="searchRooms()">
         ${type}
-      </label>
-    `;
+      </label>`;
   });
 }
 
 function getSelectedTypes() {
   return [...document.querySelectorAll('#rtypeFilters input:checked')]
     .map(cb => cb.value);
-}
-
-function getSelectedPrice() {
-  return document.getElementById('priceRange').value;
 }
 
 async function fetchFilterMeta() {
@@ -90,15 +77,12 @@ async function fetchFilterMeta() {
 
 async function fetchRooms(filters) {
   const params = new URLSearchParams();
-
   filters.types.forEach(t => params.append('rtype', t));
   params.append('minPrice', filters.minPrice);
   params.append('maxPrice', filters.maxPrice);
-
-  if (filters.checkin) params.append('checkin', filters.checkin);
+  if (filters.checkin)  params.append('checkin',  filters.checkin);
   if (filters.checkout) params.append('checkout', filters.checkout);
   params.append('guests', filters.guests);
-
   const res = await fetch(`/api/rooms?${params.toString()}`);
   return res.json();
 }
@@ -109,18 +93,9 @@ async function searchRooms() {
   const { checkin, checkout } = getSearchDates();
   const guests = getGuestCount();
 
-  const rooms = await fetchRooms({
-    types,
-    minPrice,
-    maxPrice,
-    checkin,
-    checkout,
-    guests
-  });
-
+  const rooms = await fetchRooms({ types, minPrice, maxPrice, checkin, checkout, guests });
   renderRooms(rooms);
 }
-
 
 function renderRooms(rooms) {
   const container = document.getElementById('roomList');
@@ -128,18 +103,20 @@ function renderRooms(rooms) {
 
   if (!rooms || rooms.length === 0) {
     container.innerHTML = `
-    <div class="no-room">
-      <h2>ไม่มีห้องว่าง</h2>
-      <p>ลองปรับวันที่เข้าพัก ประเภทห้อง หรือช่วงราคาใหม่อีกครั้ง</p>
-    </div>
-    `;
+      <div class="no-room">
+        <div class="no-room-icon">🏨</div>
+        <h2>ไม่มีห้องว่างในช่วงเวลานี้</h2>
+        <p>ลองปรับวันที่เข้าพัก ประเภทห้อง หรือช่วงราคาใหม่อีกครั้ง</p>
+      </div>`;
     return;
   }
-  rooms.forEach(room => {
-    container.appendChild(renderRoomCard(room));
+
+  rooms.forEach((room, i) => {
+    const card = renderRoomCard(room);
+    card.style.animationDelay = `${i * 60}ms`;
+    container.appendChild(card);
   });
 }
-
 
 function renderRoomCard(room) {
   const div = document.createElement('div');
@@ -148,19 +125,18 @@ function renderRoomCard(room) {
   const img = room.cover_image || "/assets/IMG/room2.png";
 
   div.innerHTML = `
-    <img src="${img}" alt="room">
-
+    <img src="${img}" alt="${room.rtype}">
     <div class="room-info">
       <h3>${room.rtype}</h3>
-      <p>จำนวนผู้เข้าพัก ${room.rnum}</p>
+      <span class="room-tag">👤 รองรับ ${room.rnum} ท่าน</span>
       <p>${room.rdesc || ''}</p>
     </div>
-
     <div class="room-price">
+      <span class="price-label">ราคาต่อคืน</span>
       <h3>฿${Number(room.rprice).toLocaleString()}</h3>
+      <span class="price-unit">บาท / คืน</span>
       <button onclick="bookRoom('${room.rid}')">จองเลย</button>
-    </div>
-    `;
+    </div>`;
 
   return div;
 }
@@ -176,20 +152,19 @@ function renderAuth() {
   const username = localStorage.getItem("Fname");
 
   if (username) {
+    const initial = username.charAt(0).toUpperCase();
     authArea.innerHTML = `
       <div class="user-menu">
+        <div class="user-avatar">${initial}</div>
         <span class="user-name">${username}</span>
         <div class="dropdown">
-          <div onclick="goProfile()">โปรไฟล์</div>
-          <div onclick="goMyBooking()">การจองของฉัน</div>
-          <div onclick="logout()">ออกจากระบบ</div>
+          <div onclick="goProfile()">👤 โปรไฟล์</div>
+          <div onclick="goMyBooking()">📋 การจองของฉัน</div>
+          <div onclick="logout()">🚪 ออกจากระบบ</div>
         </div>
-      </div>
-    `;
+      </div>`;
   } else {
-    authArea.innerHTML = `
-      <button class="login-btn" onclick="goLogin()">Login</button>
-    `;
+    authArea.innerHTML = `<button class="login-btn" onclick="goLogin()">เข้าสู่ระบบ</button>`;
   }
 }
 
@@ -198,13 +173,8 @@ function logout() {
   window.location.reload();
 }
 
-function goProfile() {
-  window.location.href = "/manage_account.html";
-}
-
-function goMyBooking() {
-  window.location.href = "/booking-history.html";
-}
+function goProfile()   { window.location.href = "/manage_account.html"; }
+function goMyBooking() { window.location.href = "/booking-history.html"; }
 
 function goLogin() {
   const currentUrl = window.location.href;

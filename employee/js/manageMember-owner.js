@@ -272,6 +272,6 @@ function goManageRoom() { window.location.href = '/manageRoom-owner.html'; }
 document.getElementById("logoutBtn").addEventListener("click", () => {
     if (confirm("ต้องการออกจากระบบหรือไม่?")) {
         ['userId', 'Fname', 'erole', 'role'].forEach(k => localStorage.removeItem(k));
-        window.location.href = "/login.html";
+        window.location.href = "/home.html";
     }
 });

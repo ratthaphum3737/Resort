@@ -2,52 +2,66 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Resort Booking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/home.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css">
 </head>
 <body>
 
-<!-- TOP SEARCH BAR -->
+<!-- TOP BAR -->
 <header class="top-bar">
+
   <div class="logo">
-    <img src="/assets/IMG/Bg_login1.jpg">
+    <img src="/assets/IMG/Bg_login1.jpg" alt="Resort Logo">
+    <div class="logo-text">
+      <span class="logo-name">Resort</span>
+      <span class="logo-tagline">Luxury Stay</span>
+    </div>
   </div>
 
   <div class="search-group">
-    <span class="label_check_in">เช็คอิน:</span>
+    <span class="label_check_in">เช็คอิน</span>
     <input type="date" id="checkin">
-    <span class="label_check_out">เช็คเอาท์:</span>
+    <span class="label_check_out">เช็คเอาท์</span>
     <input type="date" id="checkout">
-    <span class="label_number">จำนวน:</span>
+    <span class="label_number">ผู้เข้าพัก</span>
     <input type="number" id="guestCount" min="1" value="1">
-    <button onclick="searchRooms()">ค้นหา</button>
+    <button onclick="searchRooms()">🔍 ค้นหา</button>
   </div>
 
   <div class="login" id="authArea"></div>
-  <script>
-</script>
+
 </header>
 
+<!-- HERO STRIP -->
+<div class="hero-strip">
+  <div class="hero-title">ค้นหาห้องพัก</div>
+  <div class="hero-sub">เลือกห้องที่ใช่สำหรับคุณ — <span>ราคาดี ประทับใจ</span></div>
+</div>
 
+<!-- MAIN LAYOUT -->
 <div class="container">
 
- <aside class="filter">
-    <h3>ตัวกรอง</h3>
+  <!-- FILTER -->
+  <aside class="filter">
+    <h3>🔧 ตัวกรอง</h3>
     <label>ราคาต่อคืน</label>
     <div id="priceSlider"></div>
-    <div id="priceValue"></div>
     <div id="priceValue"></div>
 
     <h4>ประเภทห้อง</h4>
     <div id="rtypeFilters"></div>
   </aside>
 
+  <!-- ROOM LIST -->
   <main class="room-list" id="roomList">
-    <!-- ห้องจะถูกโหลดจาก JS -->
+    <!-- JS renders here -->
   </main>
 
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js"></script>
 <script src="/js/home.js" defer></script>
 </body>

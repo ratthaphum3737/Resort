@@ -27,7 +27,7 @@ function logout() {
         localStorage.removeItem("Fname");
         localStorage.removeItem("erole");
         localStorage.removeItem("role");
-        window.location.href = "/login.html";
+        window.location.href = "/home.html";
     }
 }
 
