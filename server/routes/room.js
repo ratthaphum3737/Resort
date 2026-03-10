@@ -5,7 +5,7 @@ const pool = require('../db');
 
 router.get('/', async (req, res) => {
   try {
-    const { rtype, minPrice, maxPrice } = req.query;
+    const { rtype, minPrice, maxPrice,guests  } = req.query;
 
     let sql = `
       SELECT 
@@ -41,6 +41,11 @@ router.get('/', async (req, res) => {
     if (maxPrice) {
       params.push(maxPrice);
       sql += ` AND rprice <= $${params.length}`;
+    }
+
+    if (guests) {
+      params.push(Number(guests));
+      sql += ` AND rnum >= $${params.length}`;
     }
 
     sql += ` ORDER BY rprice ASC`;
