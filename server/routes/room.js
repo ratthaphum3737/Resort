@@ -5,7 +5,7 @@ const pool = require('../db');
 
 router.get('/', async (req, res) => {
   try {
-    const { rtype, minPrice, maxPrice,guests  } = req.query;
+    const { rtype, minPrice, maxPrice, guests, checkin, checkout } = req.query;
 
     let sql = `
       SELECT 
@@ -46,6 +46,21 @@ router.get('/', async (req, res) => {
     if (guests) {
       params.push(Number(guests));
       sql += ` AND rnum >= $${params.length}`;
+    }
+    // filter วันว่าง — ตัดห้องที่มี booking ทับช่วงวันที่เลือกออก
+    if (checkin && checkout) {
+      params.push(checkin);
+      params.push(checkout);
+      const pIn  = params.length - 1;
+      const pOut = params.length;
+      sql += ` AND r.rid NOT IN (
+          SELECT br.rid
+          FROM booking_room br
+          JOIN booking b ON br.bid = b.bid
+          WHERE b.bstatus IN ('Pending', 'Confirmed')
+            AND b.bcheckin_date  < $` + '${pOut}' + `
+            AND b.bcheckout_date > $` + '${pIn}' + `
+        )`;
     }
 
     sql += ` ORDER BY rprice ASC`;
