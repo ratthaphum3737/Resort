@@ -32,21 +32,19 @@ router.post('/login', async (req, res) => {
 // 2. API ดึงรายการงานทั้งหมด
 router.get('/tasks', async (req, res) => {
   try {
-    // รับค่ารหัสพนักงานที่ส่งมาจากหน้าเว็บ
     const { empid } = req.query;
 
-    // ถ้าไม่มีการส่งรหัสพนักงานมา ให้แจ้งเตือน
     if (!empid) {
       return res.status(400).json({ error: 'ไม่พบข้อมูลรหัสพนักงาน' });
     }
 
-    // ดึงข้อมูลโดยเชื่อมตาราง Employee_Task เข้าไปเพื่อกรองเฉพาะงานของพนักงานคนนี้
     const result = await pool.query(`
       SELECT 
         t.Tid AS tid, 
-        t.Tdate AS tdue_date, 
+        t.Tdate AS tdue_date,
+        t.taskname AS taskname,
         t.TStatus AS tstatus,
-        r.RNum AS room_num
+        r.Rid AS rid
       FROM Task t
       JOIN Employee_Task et ON t.Tid = et.Tid
       LEFT JOIN Room_Task rt ON t.Tid = rt.Tid
@@ -57,7 +55,7 @@ router.get('/tasks', async (req, res) => {
     
     const tasks = result.rows.map(row => ({
       tid: row.tid,
-      tdetail: row.room_num ? 'ไปที่ห้อง ' + row.room_num : '-', 
+      tdetail: row.taskname + (row.rid ? 'ไปที่ห้อง ' + row.rid : '-'),
       tdue_date: row.tdue_date,
       tstatus: row.tstatus || 'รอดำเนินการ'
     }));
