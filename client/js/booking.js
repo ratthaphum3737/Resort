@@ -104,10 +104,9 @@ function selectDate(date, element) {
   selectedDates.push(date);
 
   if (selectedDates.length === 1) {
-    // ── คลิกวันแรก ──
     checkin  = date;
     checkout = addDays(date, 1);
-    element.classList.add('selected-day');   // OK เพราะยังไม่ sort
+    element.classList.add('selected-day');
     updateSummary();
     return;
   }
@@ -117,14 +116,15 @@ function selectDate(date, element) {
     checkin  = selectedDates[0];
     checkout = addDays(selectedDates[1], 1);
 
-    // ── ล้าง selected-day ทั้งหมดก่อน แล้ว re-apply ใหม่หลัง sort ──
-    document.querySelectorAll('.selected-day').forEach(el => {
-      el.classList.remove('selected-day');
-    });
+    // ── ล้างทุก selected-day แล้ว apply ใหม่จาก dataset ──
     document.querySelectorAll('.day').forEach(dayEl => {
-      if (dayEl.dataset.date === selectedDates[0] ||
-          dayEl.dataset.date === selectedDates[1]) {
+      dayEl.classList.remove('selected-day');
+
+      // เปรียบเทียบ string ตรงๆ
+      const d = dayEl.dataset.date;
+      if (d === selectedDates[0] || d === selectedDates[1]) {
         dayEl.classList.add('selected-day');
+        dayEl.classList.remove('in-range');   // กันซ้อน
       }
     });
 
@@ -167,8 +167,16 @@ function highlightRange() {
   if (!checkin || !checkout) return;
   document.querySelectorAll('.day').forEach(dayEl => {
     const date = dayEl.dataset.date;
-    if (date > checkin && date < checkout) dayEl.classList.add('in-range');
-    else dayEl.classList.remove('in-range');
+    if (date > checkin && date < checkout) {
+      // ── เพิ่ม: ไม่แตะวันที่เป็น selected-day ──
+      if (!dayEl.classList.contains('selected-day')) {
+        dayEl.classList.add('in-range');
+      }
+    } else {
+      if (!dayEl.classList.contains('selected-day')) {
+        dayEl.classList.remove('in-range');
+      }
+    }
   });
 }
 
