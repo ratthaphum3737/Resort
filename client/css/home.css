@@ -74,26 +74,6 @@ body {
   border-radius: 6px;
 }
 
-.logo-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
-}
-
-.logo-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 17px;
-  color: var(--gold);
-  letter-spacing: .4px;
-}
-
-.logo-tagline {
-  font-size: 10px;
-  color: rgba(255,255,255,.4);
-  letter-spacing: 1.8px;
-  text-transform: uppercase;
-}
-
 /* Search group — centred absolutely */
 .search-group {
   position: absolute;
