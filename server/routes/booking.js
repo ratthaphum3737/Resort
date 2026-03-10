@@ -242,7 +242,7 @@ router.post("/confirm-booking", async (req, res) => {
       FROM employee e
       LEFT JOIN employee_task et ON e.empid = et.empid
       LEFT JOIN task t ON et.tid = t.tid AND t.tdate = $1::DATE
-      WHERE e.user_role = 'Housekeeper'
+      WHERE e.user_role = 'Resort Worker'
       GROUP BY e.empid
       ORDER BY COUNT(t.tid) ASC
       LIMIT 1`,
