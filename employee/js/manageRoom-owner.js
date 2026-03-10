@@ -24,6 +24,30 @@ const preview    = document.getElementById("preview");
 const coverInput = document.getElementById("coverImage");
 const roomInput  = document.getElementById("roomImages");
 
+// ป้องกันการกรอกค่าติดลบสำหรับ price และ num
+const priceInput = document.getElementById("price");
+const numInput   = document.getElementById("num");
+
+function preventNegative(e) {
+    // บล็อก key: '-', 'e', 'E', '+'
+    if (['-', 'e', 'E', '+'].includes(e.key)) {
+        e.preventDefault();
+    }
+}
+
+function clampPositive(e) {
+    const val = parseFloat(e.target.value);
+    if (val < 0 || isNaN(val)) {
+        e.target.value = "";
+    }
+}
+
+priceInput.addEventListener("keydown", preventNegative);
+priceInput.addEventListener("input",   clampPositive);
+
+numInput.addEventListener("keydown", preventNegative);
+numInput.addEventListener("input",   clampPositive);
+
 coverInput.addEventListener("change", () => {
     if (coverInput.files.length > 1) {
         alert("รูปหน้าห้องเลือกได้เพียง 1 รูป");
