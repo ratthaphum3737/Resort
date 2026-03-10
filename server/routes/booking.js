@@ -86,10 +86,9 @@ router.get('/:cid', async (req, res) => {
       b.bnum_people AS num_people,
       b.bcheckin_date AS checkin,
       b.bcheckout_date AS checkout,
-      STRING_AGG(r.rnum, ', ') AS rooms
+      STRING_AGG(br.rid, ', ') AS rooms
     FROM booking b
     JOIN booking_room br ON b.bid = br.bid
-    JOIN room r ON br.rid = r.rid
     WHERE b.cid = $1 AND b.bstatus IN ('Pending','Confirmed')
     GROUP BY b.bid
     ORDER BY b.bcheckin_date DESC
