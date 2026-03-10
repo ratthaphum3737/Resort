@@ -115,6 +115,12 @@ function selectDate(date, element) {
     selectedDates.sort();
     checkin  = selectedDates[0];
     checkout = addDays(selectedDates[1], 1);
+    document.querySelectorAll('.day').forEach(dayEl => {
+      if (dayEl.dataset.date === selectedDates[0] || 
+          dayEl.dataset.date === selectedDates[1]) {
+        dayEl.classList.add('selected-day');
+      }
+    });
     highlightRange();
     updateSummary();
   }
@@ -167,7 +173,9 @@ async function loadRoomInfo() {
 
   roomPrice = Number(room.rprice);
 
-  const gallery = images.map(img => `<img src="${img.image_url}" class="room-img">`).join('');
+  const gallery = images.map(img =>
+    `<img src="${img.image_url}" class="room-img" alt="${room.rtype}">`
+  ).join('');
 
   document.getElementById('roomSummary').innerHTML = `
     <div class="room-gallery">${gallery}</div>
@@ -179,7 +187,7 @@ async function loadRoomInfo() {
         <span>ราคาต่อคืน</span>
         <h3>฿${Number(room.rprice).toLocaleString()}</h3>
       </div>
-    </div>`;
+    </div>`;  
 }
 
 function calcNights(ci, co) {

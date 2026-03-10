@@ -93,6 +93,9 @@ body {
 
 .room-detail {
   padding: 20px 24px;
+  background: var(--white);   
+  position: relative;          
+  z-index: 1;
 }
 
 .room-detail h3 {
@@ -253,15 +256,15 @@ body {
 }
 
 .selected-day {
-  background: var(--navy) !important;
-  color: #fff !important;
+  background: var(--navy) ;
+  color: #fff ;
   font-weight: 700;
   box-shadow: 0 2px 8px rgba(31,60,136,.25);
 }
 
 .in-range {
-  background: rgba(200,168,75,.2) !important;
-  color: var(--navy) !important;
+  background: rgba(200,168,75,.2) ;
+  color: var(--navy) ;
 }
 
 .empty-day {
