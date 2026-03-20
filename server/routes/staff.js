@@ -30,14 +30,15 @@ router.post('/login', async (req, res) => {
 });
 
 // 2. API ดึงรายการงานทั้งหมด
+// 2. API ดึงรายการงานทั้งหมด (แสดงแค่ 7 วันจากปัจจุบัน)
 router.get('/tasks', async (req, res) => {
   try {
     const { empid } = req.query;
-
+ 
     if (!empid) {
       return res.status(400).json({ error: 'ไม่พบข้อมูลรหัสพนักงาน' });
     }
-
+ 
     const result = await pool.query(`
       SELECT 
         t.Tid AS tid, 
@@ -50,16 +51,17 @@ router.get('/tasks', async (req, res) => {
       LEFT JOIN Room_Task rt ON t.Tid = rt.Tid
       LEFT JOIN Room r ON rt.Rid = r.Rid
       WHERE et.EMPid = $1
+        AND t.Tdate BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '7 days'
       ORDER BY t.Tdate ASC
     `, [empid]);
     
     const tasks = result.rows.map(row => ({
       tid: row.tid,
-      tdetail: row.taskname ,
+      tdetail: row.taskname,
       tdue_date: row.tdue_date,
       tstatus: row.tstatus || 'รอดำเนินการ'
     }));
-
+ 
     res.json(tasks);
   } catch (err) {
     console.error(err);
