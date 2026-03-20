@@ -1,40 +1,39 @@
 async function login() {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
-  const role = document.getElementById('role').value;
-
+ 
   const res = await fetch('/api/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password, role })
+    body: JSON.stringify({ email, password })  // ไม่ส่ง role แล้ว
   });
-
+ 
   if (!res.ok) {
-    alert('Login ไม่สำเร็จ');
+    document.getElementById('errorMsg').textContent = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
     return;
   }
-
+ 
   const data = await res.json();
-
+  const role = data.role;  // รับ role จาก server
+ 
   localStorage.setItem('userId', data.id);
   localStorage.setItem('Fname', data.fname);
-  localStorage.setItem("email", data.email);
-  
+  localStorage.setItem('email', data.email);
+ 
   if (role === 'employee') {
     localStorage.setItem('erole', role);
   } else if (role === 'customer') {
     localStorage.setItem('role', role);
-  }
-  else if (role === 'owner') {
+  } else if (role === 'owner') {
     localStorage.setItem('orole', role);
   }
-
+ 
   const params = new URLSearchParams(window.location.search);
   const returnUrl = params.get("returnUrl");
-
+ 
   if (role === 'employee') {
     window.location.href = '/staff-dashboard.html';
-  }else if (role === 'owner') {
+  } else if (role === 'owner') {
     window.location.href = '/report-owner.html';
   } else {
     if (returnUrl) {
