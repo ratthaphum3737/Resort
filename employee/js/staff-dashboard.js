@@ -70,7 +70,7 @@ async function loadCheckouts() {
     table.innerHTML = '';
  
     if (bookings.length === 0) {
-      table.innerHTML = `<tr><td colspan="6" style="text-align:center;">ไม่มีรายการ Check-out วันนี้ ✅</td></tr>`;
+      table.innerHTML = `<tr><td colspan="6" style="text-align:center;">ไม่มีรายการ Check-out วันนี้</td></tr>`;
       return;
     }
  
@@ -137,7 +137,7 @@ function switchTab(tab) {
     document.getElementById('menu-checkout').classList.add('active');
     taskSection.style.display     = 'none';
     checkoutSection.style.display = '';
-    if (headerTitle) headerTitle.innerText = '🏁 Check Out วันนี้';
+    if (headerTitle) headerTitle.innerText = 'Check Out วันนี้';
     if (headerSub)   headerSub.innerText   = 'รายการผู้เข้าพักที่ครบกำหนด Check-out';
     loadCheckouts();
   } else {
