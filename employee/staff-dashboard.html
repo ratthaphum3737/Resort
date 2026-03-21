@@ -13,6 +13,7 @@
       <ul class="menu">
         <li class="active" id="menu-pending" onclick="switchTab('pending')">งานของฉัน (My Tasks)</li>
         <li id="menu-completed" onclick="switchTab('completed')">งานที่ทำเสร็จแล้ว</li>
+        <li id="menu-checkout" onclick="switchTab('checkout')">🏁 Check Out</li>
       </ul>
       <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
     </aside>
@@ -20,10 +21,10 @@
     <main class="main-content">
       <header>
         <h1>ตารางงานพนักงาน (Tasks)</h1>
-        <p>รายการงานที่ต้องดำเนินการประจำวัน</p>
+        <p id="pageSubtitle">รายการงานที่ต้องดำเนินการประจำวัน</p>
       </header>
       
-      <section class="table-container">
+      <section class="table-container" id="taskSection">
         <table>
           <thead>
             <tr>
