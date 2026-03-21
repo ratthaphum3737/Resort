@@ -59,29 +59,102 @@ async function loadTasks(statusFilter) {
   }
 }
 
-// 3. ฟังก์ชันสลับหน้าแท็บ (เมนูด้านซ้าย)
-function switchTab(tab) {
-    currentTab = tab;
-    
-    // ลบแถบสีเข้ม (active) ออกจากทุกเมนูก่อน
-    const menuPending = document.getElementById('menu-pending');
-    const menuCompleted = document.getElementById('menu-completed');
-    
-    if(menuPending) menuPending.classList.remove('active');
-    if(menuCompleted) menuCompleted.classList.remove('active');
-    
-    // ใส่แถบสีเข้ม (active) ให้เมนูที่ถูกกด และเปลี่ยนหัวข้อหน้าเว็บ
-    const headerTitle = document.querySelector('header h1');
-    
-    if (tab === 'pending') {
-        if(menuPending) menuPending.classList.add('active');
-        if(headerTitle) headerTitle.innerText = 'ตารางงานพนักงาน (Tasks)';
-    } else {
-        if(menuCompleted) menuCompleted.classList.add('active');
-        if(headerTitle) headerTitle.innerText = 'งานที่ทำเสร็จแล้ว (Completed)';
+async function loadCheckouts() {
+  const table = document.getElementById('checkoutTable');
+  table.innerHTML = `<tr><td colspan="6" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>`;
+ 
+  try {
+    const res = await fetch('/api/staff/checkouts');
+    const bookings = await res.json();
+ 
+    table.innerHTML = '';
+ 
+    if (bookings.length === 0) {
+      table.innerHTML = `<tr><td colspan="6" style="text-align:center;">ไม่มีรายการ Check-out วันนี้ ✅</td></tr>`;
+      return;
     }
-    
-    loadTasks(tab); 
+ 
+    bookings.forEach(b => {
+      const checkin  = new Date(b.bcheckin_date).toLocaleDateString('th-TH');
+      const checkout = new Date(b.bcheckout_date).toLocaleDateString('th-TH');
+ 
+      table.innerHTML += `
+        <tr>
+          <td>${b.bid}</td>
+          <td>${b.rid}</td>
+          <td>${b.num_people} ท่าน</td>
+          <td>${checkin}</td>
+          <td>${checkout}</td>
+          <td>
+            <button class="action-btn checkout-btn" onclick="doCheckout('${b.bid}', '${b.rid}')">
+              Check Out
+            </button>
+          </td>
+        </tr>`;
+    });
+  } catch (err) {
+    console.error(err);
+    table.innerHTML = `<tr><td colspan="6" style="color:red;text-align:center;">เชื่อมต่อฐานข้อมูลไม่ได้</td></tr>`;
+  }
+}
+
+async function doCheckout(bid, rid) {
+  const confirmed = confirm(`ยืนยัน Check-out การจอง ${bid} (ห้อง ${rid}) ?\n\nระบบจะ:\n• เปลี่ยนสถานะการจองเป็น Completed\n• ลบงานในอนาคตที่ยังไม่เสร็จ\n• สร้างงานทำความสะอาดให้พนักงานอัตโนมัติ`);
+  if (!confirmed) return;
+ 
+  try {
+    const res = await fetch(`/api/staff/checkout/${bid}`, { method: 'POST' });
+    const data = await res.json();
+ 
+    if (res.ok) {
+      alert(`Check-out เรียบร้อย!\nสร้างงานทำความสะอาด: ${data.cleaningTaskId}`);
+      loadCheckouts();
+    } else {
+      alert('เกิดข้อผิดพลาด: ' + (data.error || 'ไม่ทราบสาเหตุ'));
+    }
+  } catch (err) {
+    console.error(err);
+    alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
+  }
+}
+
+
+function switchTab(tab) {
+  currentTab = tab;
+ 
+  // ล้าง active ทุกเมนู
+  ['menu-pending', 'menu-completed', 'menu-checkout'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
+ 
+  const taskSection     = document.getElementById('taskSection');
+  const checkoutSection = document.getElementById('checkoutSection');
+  const headerTitle     = document.querySelector('header h1');
+  const headerSub       = document.getElementById('pageSubtitle');
+ 
+  if (tab === 'checkout') {
+    document.getElementById('menu-checkout').classList.add('active');
+    taskSection.style.display     = 'none';
+    checkoutSection.style.display = '';
+    if (headerTitle) headerTitle.innerText = '🏁 Check Out วันนี้';
+    if (headerSub)   headerSub.innerText   = 'รายการผู้เข้าพักที่ครบกำหนด Check-out';
+    loadCheckouts();
+  } else {
+    taskSection.style.display     = '';
+    checkoutSection.style.display = 'none';
+ 
+    if (tab === 'pending') {
+      document.getElementById('menu-pending').classList.add('active');
+      if (headerTitle) headerTitle.innerText = 'ตารางงานพนักงาน (Tasks)';
+      if (headerSub)   headerSub.innerText   = 'รายการงานที่ต้องดำเนินการประจำวัน';
+    } else {
+      document.getElementById('menu-completed').classList.add('active');
+      if (headerTitle) headerTitle.innerText = 'งานที่ทำเสร็จแล้ว (Completed)';
+      if (headerSub)   headerSub.innerText   = 'รายการงานที่ดำเนินการเสร็จสิ้นแล้ว';
+    }
+    loadTasks(tab);
+  }
 }
 
 
